@@ -21,85 +21,85 @@ class scenaPrincipal extends Phaser.Scene {
   }
 
   create() {
+    const { width, height } = this.scale;
+
     const fondo = this.add.image(0, 0, "fondo");
-    fondo.setOrigin(0, 0); // Asegura que la imagen comience desde la esquina superior izquierda
-    fondo.displayWidth = this.scale.width; // Ajusta el ancho al tamaño de la pantalla
-    fondo.displayHeight = this.scale.height; // Ajusta la altura al tamaño de la pantalla
+    fondo.setOrigin(0, 0);
+    fondo.displayWidth = width;
+    fondo.displayHeight = height;
 
-    this.Terran = this.add.image(500, 80, "tierra").setScale(0.5);
-    this.Luna = this.add.image(900, 70, "luna").setScale(0.1);
-    this.nube = this.add.image(100, 200, "nube").setScale(0.3);
-    this.nube2 = this.add.image(20, 100, "nube2").setScale(0.3);
+    this.Terran = this.add
+      .image(width * 0.4, height * 0.15, "tierra")
+      .setScale(0.5);
+    this.Luna = this.add.image(width * 0.8, height * 0.1, "luna").setScale(0.1);
+    this.nube = this.add.image(width * 0.2, height * 0.3, "nube").setScale(0.3);
+    this.nube2 = this.add
+      .image(width * 0.1, height * 0.2, "nube2")
+      .setScale(0.3);
 
-    // La animación de la estrella
     this.anims.create({
       key: "parpadear",
       frames: this.anims.generateFrameNumbers("estrella", { start: 0, end: 3 }),
-      frameRate: 4, // Velocidad de la animación
-      repeat: -1, // Repetir la animación indefinidamente
+      frameRate: 4,
+      repeat: -1,
     });
 
-    // Añadir el sprite de la estrella y aplicar la animación
-    const estrella = this.add.sprite(250, 370, "estrella");
+    const estrella = this.add.sprite(width * 0.5, height * 0.7, "estrella");
     estrella.anims.play("parpadear");
 
-    // Estrella fugaz
-
-    // Crear la animación para la estrella fugaz
     this.anims.create({
       key: "fugaz",
-      frames: this.anims.generateFrameNumbers("fuga", { start: 0, end: 9 }), 
-      frameRate: 7, // Velocidad de la animación
-      repeat: -1, // Repetir la animación indefinidamente
+      frames: this.anims.generateFrameNumbers("fuga", { start: 0, end: 9 }),
+      frameRate: 7,
+      repeat: -1,
     });
 
-    // Añadir el sprite de la estrella fugaz y aplicar la animación
-    const estrellaFugaz = this.add.sprite(300, 100, "fuga");
+    const estrellaFugaz = this.add.sprite(width * 0.6, height * 0.2, "fuga");
     estrellaFugaz.anims.play("fugaz");
 
-    // Titulo
     const titulo = this.add.text(
-      this.scale.width / 2, // Posición X (centro de la pantalla)
-      370, // Posición Y (parte superior)
-      "Presiona la tecla ESPACIO para continuar",
+      width / 2,
+      height * 0.9,
+      "Toca la pantalla o presiona ESPACIO para continuar",
       {
-        fontSize: "20px",
+        fontSize: "18px",
         color: "#FFFFFF",
         fontStyle: "bold",
         align: "center",
       }
     );
-    titulo.setOrigin(0.5); // el texto en X e Y
+    titulo.setOrigin(0.5);
 
-    const music = this.sound.add("musica", { loop: true, volume: 0.2 }); // Carga el sonido cargado // sonido en 0.2
-    music.play(); // Inicia la reproducción
+    const music = this.sound.add("musica", { loop: true, volume: 0.2 });
+    music.play();
 
     this.capaNegra = this.add.graphics();
-    this.capaNegra.fillStyle(0x000000, 1); // Negro sólido
-    this.capaNegra.fillRect(0, 0, this.scale.width, this.scale.height);
-    this.capaNegra.setAlpha(0); // Transparente al inicio
+    this.capaNegra.fillStyle(0x000000, 1);
+    this.capaNegra.fillRect(0, 0, width, height);
+    this.capaNegra.setAlpha(0);
 
-    // presionar la tecla ESPACIO
-    this.input.keyboard.on("keydown-SPACE", () => {
-      // Inicia la transición de oscurecimiento
+    const iniciarTransicion = () => {
       this.tweens.add({
         targets: this.capaNegra,
-        alpha: 1, // Oscurecer
-        duration: 1000, // 1 segundo
+        alpha: 1,
+        duration: 1000,
         onComplete: () => {
           console.log("Cambio de escena ejecutado");
-          this.sound.stopAll(); // Detiene la música
-          this.scene.start("scenaIntro", { fromFade: true }); // Cambia a la siguiente escena
+          this.sound.stopAll();
+          this.scene.start("scenaIntro", { fromFade: true });
         },
       });
-    });
+    };
+
+    this.input.keyboard.on("keydown-SPACE", iniciarTransicion);
+    this.input.on("pointerdown", iniciarTransicion);
   }
 
   update() {
     this.nube.x -= 0.3;
     this.nube2.x += 0.3;
 
-    if (this.nube.x < -50) this.nube.x = 850;
-    if (this.nube2.x > 850) this.nube2.x = -50;
+    if (this.nube.x < -50) this.nube.x = this.scale.width + 50;
+    if (this.nube2.x > this.scale.width + 50) this.nube2.x = -50;
   }
 }
