@@ -13,7 +13,6 @@ class scenaJuego extends Phaser.Scene {
     this.load.image("fondo", "assets/scenaJuego/fondoAzul.png");
     this.load.image("bala", "assets/scenaJuego/bala.png");
     this.load.audio("sonidoDisparo", "assets/scenaJuego/disparo.mp3");
-
     this.load.audio("musicaJuego", "assets/musicaSpaceLoop.mp3");
   }
 
@@ -27,38 +26,45 @@ class scenaJuego extends Phaser.Scene {
     this.estrellas1 = this.add.image(200, 400, "estrellas").setScale(0.2);
     this.estrellas2 = this.add.image(800, 300, "estrellas").setScale(0.2);
     this.GranPlaneta2 = this.add.image(100, 450, "GranPlaneta2").setScale(1);
-    this.sonidoDisparo = this.sound.add("sonidoDisparo"), {volume: 0.1} ;
+
+    this.sonidoDisparo = this.sound.add("sonidoDisparo");
 
     // Físicas de la nave
     this.nave = this.physics.add.sprite(200, 300, "nave");
     this.nave.setCollideWorldBounds(true);
 
-    //
-    this.balas = this.physics.add.group({
-      defaultKey: "bala",
-    });
+    this.balas = this.physics.add.group({ defaultKey: "bala" });
 
-    // Controles de movimiento de la nave
+    // Controles de teclado
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    // Reproducir música
-    const music = this.sound.add("musicaJuego", { loop: true, volume: 0.2 });
-    music.play();
+    // Música del juego
+    this.music = this.sound.add("musicaJuego", { loop: true, volume: 0.2 });
+    this.music.play();
 
-    // clic para disparar
+    // Controles táctiles
+    this.input.on("pointermove", this.moverNave, this);
     this.input.on("pointerdown", this.disparar, this);
-
   }
 
-  disparar() {
-    const bala = this.balas.get(this.nave.x + 40, this.nave.y + 10); // Posición inicial de la bala
-    if (bala) {
-      bala.setActive(true);
-      bala.setVisible(true);
-      bala.body.setVelocityX(300); // Velocidad de la bala hacia arriba
+  moverNave(pointer) {
+    // Si toca la izquierda de la pantalla, mueve la nave
+    if (pointer.x < this.scale.width / 2) {
+      this.nave.x = pointer.x;
+      this.nave.y = pointer.y;
+    }
+  }
 
-      // Reproducir el sonido de disparo
-      this.sonidoDisparo.play();
+  disparar(pointer) {
+    // Solo dispara si se toca la parte derecha de la pantalla
+    if (pointer.x > this.scale.width / 2) {
+      const bala = this.balas.get(this.nave.x + 40, this.nave.y + 10);
+      if (bala) {
+        bala.setActive(true);
+        bala.setVisible(true);
+        bala.body.setVelocityX(300);
+        this.sonidoDisparo.play();
+      }
     }
   }
 
@@ -71,7 +77,6 @@ class scenaJuego extends Phaser.Scene {
     this.estrellas1.x -= 1;
     this.estrellas2.x -= 1;
 
-    // Reiniciar posición si los elementos salen del lado izquierdo de la pantalla
     if (this.planetas.x < -50) this.planetas.x = 850;
     if (this.planetas2.x < -50) this.planetas2.x = 850;
     if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
@@ -82,20 +87,19 @@ class scenaJuego extends Phaser.Scene {
     // Reinicia la velocidad de la nave
     this.nave.setVelocity(0);
 
-    // Controles básicos de movimiento
+    // Controles de teclado
     if (this.cursors.left.isDown) {
       this.nave.setVelocityX(-200);
     } else if (this.cursors.right.isDown) {
       this.nave.setVelocityX(200);
     }
-
     if (this.cursors.up.isDown) {
       this.nave.setVelocityY(-200);
     } else if (this.cursors.down.isDown) {
       this.nave.setVelocityY(200);
     }
 
-    // Desactivar y ocultar las balas que están fuera de pantalla
+    // Eliminar balas fuera de pantalla
     this.balas.children.each((bala) => {
       if (bala.active && bala.y < 0) {
         bala.setActive(false);
