@@ -1,6 +1,8 @@
 class scenaJuego extends Phaser.Scene {
   constructor() {
     super({ key: "scenaJuego" });
+    this.puedeDisparar = true; // Variable para controlar si el jugador puede disparar
+    this.tiempoEsperaDisparo = 500; // Tiempo de espera en milisegundos (0.5 segundos)
   }
 
   preload() {
@@ -17,7 +19,14 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
-    this.fondo = this.add.image(500, 250, "fondo").setScale();
+    // Ajustar el fondo para que ocupe toda la pantalla
+    this.fondo = this.add.image(0, 0, "fondo").setOrigin(0, 0);
+    this.fondo.setScale(
+      this.scale.width / this.fondo.width,
+      this.scale.height / this.fondo.height
+    );
+
+    // Añadir elementos del juego
     this.background = this.add.image(500, 350, "background").setScale(0.3);
     this.planetas = this.add.image(600, 200, "planetas").setScale(0.2);
     this.planetas2 = this.add.image(350, 500, "planetas").setScale(1);
@@ -27,12 +36,14 @@ class scenaJuego extends Phaser.Scene {
     this.estrellas2 = this.add.image(800, 300, "estrellas").setScale(0.2);
     this.GranPlaneta2 = this.add.image(100, 450, "GranPlaneta2").setScale(1);
 
+    // Sonido de disparo
     this.sonidoDisparo = this.sound.add("sonidoDisparo");
 
     // Físicas de la nave
     this.nave = this.physics.add.sprite(200, 300, "nave");
     this.nave.setCollideWorldBounds(true);
 
+    // Grupo de balas
     this.balas = this.physics.add.group({ defaultKey: "bala" });
 
     // Controles de teclado
@@ -56,14 +67,20 @@ class scenaJuego extends Phaser.Scene {
   }
 
   disparar(pointer) {
-    // Solo dispara si se toca la parte derecha de la pantalla
-    if (pointer.x > this.scale.width / 2) {
+    // Solo dispara si se toca la parte derecha de la pantalla y puedeDisparar es true
+    if (pointer.x > this.scale.width / 20 && this.puedeDisparar) {
       const bala = this.balas.get(this.nave.x + 40, this.nave.y + 10);
       if (bala) {
         bala.setActive(true);
         bala.setVisible(true);
         bala.body.setVelocityX(300);
         this.sonidoDisparo.play();
+
+        // Desactivar el disparo temporalmente
+        this.puedeDisparar = false;
+        this.time.delayedCall(this.tiempoEsperaDisparo, () => {
+          this.puedeDisparar = true;
+        });
       }
     }
   }
@@ -77,6 +94,7 @@ class scenaJuego extends Phaser.Scene {
     this.estrellas1.x -= 1;
     this.estrellas2.x -= 1;
 
+    // Reiniciar posición de los elementos cuando salen de la pantalla
     if (this.planetas.x < -50) this.planetas.x = 850;
     if (this.planetas2.x < -50) this.planetas2.x = 850;
     if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
@@ -101,7 +119,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Eliminar balas fuera de pantalla
     this.balas.children.each((bala) => {
-      if (bala.active && bala.y < 0) {
+      if (bala.active && bala.x > this.scale.width) {
         bala.setActive(false);
         bala.setVisible(false);
       }
