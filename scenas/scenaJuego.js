@@ -1,7 +1,7 @@
 class scenaJuego extends Phaser.Scene {
   constructor() {
     super({ key: "scenaJuego" });
-    this.puedeDisparar = true; // Variable para controlar si el jugador puede disparar
+    this.puedeDisparar = true;
     this.tiempoEsperaDisparo = 500; // Tiempo de espera en milisegundos (0.5 segundos)
   }
 
@@ -15,7 +15,7 @@ class scenaJuego extends Phaser.Scene {
     this.load.image("fondo", "assets/scenaJuego/fondoAzul.png");
     this.load.image("bala", "assets/scenaJuego/bala.png");
     this.load.audio("sonidoDisparo", "assets/scenaJuego/disparo.mp3");
-    this.load.audio("musicaJuego", "assets/musicaSpaceLoop.mp3");
+    // this.load.audio("musicaJuego", "assets/musicaSpaceLoop.mp3");
   }
 
   create() {
@@ -50,8 +50,8 @@ class scenaJuego extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     // Música del juego
-    this.music = this.sound.add("musicaJuego", { loop: true, volume: 0.2 });
-    this.music.play();
+    // this.music = this.sound.add("musicaJuego", { loop: true, volume: 0.2 });
+    // this.music.play();
 
     // Controles táctiles
     this.input.on("pointermove", this.moverNave, this);

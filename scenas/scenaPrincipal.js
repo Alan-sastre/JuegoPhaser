@@ -70,7 +70,7 @@ class scenaPrincipal extends Phaser.Scene {
     );
     titulo.setOrigin(0.5);
 
-    const music = this.sound.add("musica", { loop: true, volume: 0.2 });
+    const music = this.sound.add("musica", { loop: true, volume: 0.1 });
     music.play();
 
     this.capaNegra = this.add.graphics();
@@ -85,7 +85,6 @@ class scenaPrincipal extends Phaser.Scene {
         duration: 1000,
         onComplete: () => {
           console.log("Cambio de escena ejecutado");
-          this.sound.stopAll();
           this.scene.start("scenaIntro", { fromFade: true });
         },
       });
