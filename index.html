@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Robi</title>
+    <link rel="icon" href="assets/logorobcodesolutions.ico" type="image/png"> <!-- se tiene que colocar siempre .ico -->
+
+</head>
+
+<body>
+
+    <style>
+        body {
+            display: grid;
+            place-items: center;
+            height: 100vh;
+            background: rgb(0, 0, 0);
+        }
+    </style>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.86.0/dist/phaser.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.86.0/dist/phaser.min.js"></script>
+
+    <!-- Escenas phaser -->
+    <script src="scenas/scenaPrincipal.js"></script>
+    <script src="scenas/scenaIntro.js"></script>
+    <script src="scenas/scenaJuego.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>
