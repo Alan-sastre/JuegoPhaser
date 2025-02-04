@@ -20,10 +20,13 @@ class scenaRompecabezas extends Phaser.Scene {
   create() {
     const screenWidth = this.scale.width;
     const screenHeight = this.scale.height;
+
+    // Ajustar el fondo al tamaño de la pantalla
     const fondo = this.add.image(0, 0, "fondo").setOrigin(0, 0);
     fondo.displayWidth = screenWidth;
     fondo.displayHeight = screenHeight;
 
+    // Texto para mostrar la pieza seleccionada
     this.textoSeleccionado = this.add
       .text(screenWidth / 2, 50, "", {
         fontSize: "24px",
@@ -35,6 +38,7 @@ class scenaRompecabezas extends Phaser.Scene {
       .setOrigin(0.5)
       .setVisible(false);
 
+    // Definir las posiciones y tamaños de las piezas
     const sizes = {
       pecho: {
         width: 145,
@@ -68,23 +72,24 @@ class scenaRompecabezas extends Phaser.Scene {
       },
     };
 
+    // Añadir las imágenes de los brazos
     this.add.image(100, 210, "brazos").setOrigin(0, 0);
     this.add.image(700, 210, "brazosI").setOrigin(0, 0);
 
+    // Crear los objetivos (rectángulos) para cada pieza
     const targets = {};
     Object.keys(sizes).forEach((key) => {
-      targets[key] = this.add
-        .rectangle(
-          sizes[key].x,
-          sizes[key].y,
-          sizes[key].width,
-          sizes[key].height,
-          0xffffff,
-          0.3
-        )
-        .setStrokeStyle(2, 0x0000ff);
+      targets[key] = this.add.rectangle(
+        sizes[key].x,
+        sizes[key].y,
+        sizes[key].width,
+        sizes[key].height,
+        0xffffff,
+        0.3
+      );
     });
 
+    // Crear las piezas del rompecabezas
     this.piezas = {};
     Object.keys(sizes).forEach((key) => {
       let pieza = this.add
@@ -96,15 +101,15 @@ class scenaRompecabezas extends Phaser.Scene {
         .setScale(0.5)
         .setInteractive({ draggable: true });
 
-      pieza.setShadow(4, 4, "#000000", 8);
-
       this.input.setDraggable(pieza);
       this.piezas[key] = { sprite: pieza, target: targets[key], placed: false };
     });
 
+    // Cargar los sonidos
     this.sonidoCorrecto = this.sound.add("sonidoCorrecto");
     this.sonidoIncorrecto = this.sound.add("sonidoIncorrecto");
 
+    // Evento para iniciar el arrastre
     this.input.on("dragstart", (pointer, gameObject) => {
       let piezaSeleccionada = Object.keys(this.piezas).find(
         (key) => this.piezas[key].sprite === gameObject
@@ -116,11 +121,13 @@ class scenaRompecabezas extends Phaser.Scene {
       }
     });
 
+    // Evento para mover las piezas
     this.input.on("drag", (pointer, gameObject, dragX, dragY) => {
       gameObject.x = Phaser.Math.Clamp(dragX, 0, screenWidth);
       gameObject.y = Phaser.Math.Clamp(dragY, 0, screenHeight);
     });
 
+    // Evento para finalizar el arrastre
     this.input.on("dragend", (pointer, gameObject) => {
       let piezaCorrecta = Object.values(this.piezas).find(
         (p) => p.sprite === gameObject
@@ -149,10 +156,18 @@ class scenaRompecabezas extends Phaser.Scene {
       }
       this.textoSeleccionado.setVisible(false);
 
+      // Verificar si todas las piezas están colocadas
       if (Object.values(this.piezas).every((p) => p.placed)) {
         this.completarRompecabezas();
       }
     });
+
+    // Ajustar el tamaño de las piezas para dispositivos móviles
+    if (this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
+      Object.values(this.piezas).forEach((p) => {
+        p.sprite.setScale(0.8); // Ajustar la escala para móviles
+      });
+    }
   }
 
   completarRompecabezas() {
@@ -171,8 +186,8 @@ class scenaRompecabezas extends Phaser.Scene {
       )
       .setOrigin(0.5);
 
-    this.time.delayedCall(4000, () => {
-      this.scene.start("siguienteEscena");
+    this.time.delayedCall(5000, () => {
+      this.scene.start("scenaJuego");
     });
   }
 }
