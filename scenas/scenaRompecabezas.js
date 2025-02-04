@@ -4,7 +4,7 @@ class scenaRompecabezas extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("fondo2", "assets/scenaRompecabezas/fondo.png?v=1");
+    this.load.image("fondo3", "assets/scenaRompecabezas/fondo.png?v=1");
     this.load.image("cabeza", "assets/scenaRompecabezas/cabeza.png");
     this.load.image("izquierda", "assets/scenaRompecabezas/izquierda.png");
     this.load.image("BrazoDerecho", "assets/scenaRompecabezas/derecha.png");
@@ -22,7 +22,7 @@ class scenaRompecabezas extends Phaser.Scene {
     const screenHeight = this.scale.height;
 
     // Ajustar el fondo al tamaño de la pantalla
-    const fondo = this.add.image(0, 0, "fondo2").setOrigin(0, 0);
+    const fondo = this.add.image(0, 0, "fondo3").setOrigin(0, 0);
     fondo.displayWidth = screenWidth;
     fondo.displayHeight = screenHeight;
 
