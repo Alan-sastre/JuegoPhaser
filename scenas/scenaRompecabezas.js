@@ -21,6 +21,9 @@ class scenaRompecabezas extends Phaser.Scene {
     const screenWidth = this.scale.width;
     const screenHeight = this.scale.height;
 
+    // Calcular el factor de escala en función del tamaño de la pantalla
+    const scaleFactor = Math.min(screenWidth / 800, screenHeight / 600);
+
     // Ajustar el fondo al tamaño de la pantalla
     const fondo = this.add.image(0, 0, "fondo3").setOrigin(0, 0);
     fondo.displayWidth = screenWidth;
@@ -29,7 +32,7 @@ class scenaRompecabezas extends Phaser.Scene {
     // Texto para mostrar la pieza seleccionada
     this.textoSeleccionado = this.add
       .text(screenWidth / 2, 50, "", {
-        fontSize: "24px",
+        fontSize: `${24 * scaleFactor}px`, // Ajustar el tamaño del texto
         fontFamily: "Arial",
         color: "#FFFFFF",
         backgroundColor: "rgba(0, 0, 0, 0.7)",
@@ -41,40 +44,43 @@ class scenaRompecabezas extends Phaser.Scene {
     // Definir las posiciones y tamaños de las piezas
     const sizes = {
       pecho: {
-        width: 145,
-        height: 150,
+        width: 145 * scaleFactor,
+        height: 150 * scaleFactor,
         x: screenWidth / 2,
         y: screenHeight / 2.6,
       },
       izquierda: {
-        width: 60,
-        height: 133,
+        width: 60 * scaleFactor,
+        height: 133 * scaleFactor,
         x: screenWidth / 1.67,
         y: screenHeight / 2.1,
       },
       BrazoDerecho: {
-        width: 60,
-        height: 133,
+        width: 60 * scaleFactor,
+        height: 133 * scaleFactor,
         x: screenWidth / 2.5,
         y: screenHeight / 2.1,
       },
       PieIzquierdo: {
-        width: 50,
-        height: 110,
+        width: 50 * scaleFactor,
+        height: 110 * scaleFactor,
         x: screenWidth / 2.1,
         y: screenHeight / 1.57,
       },
       PieDerecho: {
-        width: 50,
-        height: 110,
+        width: 50 * scaleFactor,
+        height: 110 * scaleFactor,
         x: screenWidth / 1.9,
         y: screenHeight / 1.57,
       },
     };
 
-    // Añadir las imágenes de los brazos
-    this.add.image(100, 210, "brazos").setOrigin(0, 0);
-    this.add.image(700, 210, "brazosI").setOrigin(0, 0);
+    this.add
+      .image(100 * scaleFactor, 210 * scaleFactor, "brazos")
+      .setOrigin(0, 0);
+    this.add
+      .image(700 * scaleFactor, 210 * scaleFactor, "brazosI")
+      .setOrigin(0, 0);
 
     // Crear los objetivos (rectángulos) para cada pieza
     const targets = {};
@@ -94,11 +100,17 @@ class scenaRompecabezas extends Phaser.Scene {
     Object.keys(sizes).forEach((key) => {
       let pieza = this.add
         .image(
-          Phaser.Math.Between(100, screenWidth - 100),
-          Phaser.Math.Between(100, screenHeight - 100),
+          Phaser.Math.Between(
+            100 * scaleFactor,
+            screenWidth - 100 * scaleFactor
+          ),
+          Phaser.Math.Between(
+            100 * scaleFactor,
+            screenHeight - 100 * scaleFactor
+          ),
           key
         )
-        .setScale(0.5)
+        .setScale(0.5 * scaleFactor) // Ajustar la escala en función de la resolución
         .setInteractive({ draggable: true });
 
       this.input.setDraggable(pieza);
@@ -142,7 +154,8 @@ class scenaRompecabezas extends Phaser.Scene {
           target.y
         );
 
-        if (distance < 30) {
+        if (distance < 30 * scaleFactor) {
+          // Ajustar la distancia en función de la escala
           gameObject.x = target.x;
           gameObject.y = target.y;
           gameObject.disableInteractive();
@@ -161,23 +174,20 @@ class scenaRompecabezas extends Phaser.Scene {
         this.completarRompecabezas();
       }
     });
-
-    // Ajustar el tamaño de las piezas para dispositivos móviles
-    if (this.sys.game.device.os.android || this.sys.game.device.os.iOS) {
-      Object.values(this.piezas).forEach((p) => {
-        p.sprite.setScale(0.8); // Ajustar la escala para móviles
-      });
-    }
   }
 
   completarRompecabezas() {
+    const screenWidth = this.scale.width;
+    const screenHeight = this.scale.height;
+    const scaleFactor = Math.min(screenWidth / 800, screenHeight / 600);
+
     const mensaje = this.add
       .text(
-        this.scale.width / 2,
-        this.scale.height / 8,
-        "¡Felicidades! Completaste el rompecabezas ",
+        screenWidth / 2,
+        screenHeight / 8,
+        "¡Felicidades! Completaste el rompecabezas",
         {
-          fontSize: "32px",
+          fontSize: `${32 * scaleFactor}px`,
           fontFamily: "Arial",
           color: "#FFFFFF",
           backgroundColor: "transparent",
