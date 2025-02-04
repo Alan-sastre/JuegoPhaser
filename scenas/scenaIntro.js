@@ -275,7 +275,7 @@ showNextDialogue() {
           continueText.setText("Da click para continuar");
           this.input.once("pointerdown", () => {
             this.closeDialog(dialogBox, dialogText, continueText);
-            this.scene.start("scenaJuego");
+            this.scene.start("scenaRompecabezas");
           });
         }
       },

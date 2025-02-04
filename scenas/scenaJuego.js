@@ -2,7 +2,7 @@ class scenaJuego extends Phaser.Scene {
   constructor() {
     super({ key: "scenaJuego" });
     this.puedeDisparar = true;
-    this.tiempoEsperaDisparo = 500; // Tiempo de espera en milisegundos (0.5 segundos)
+    this.tiempoEsperaDisparo = 300; // Tiempo de espera en milisegundos (0.5 segundos)
   }
 
   preload() {
