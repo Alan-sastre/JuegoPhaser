@@ -5,7 +5,7 @@ class scenaPrincipal extends Phaser.Scene {
 
   preload() {
     this.load.image("tierra", "assets/scenaPrincipal/icon.png");
-    this.load.image("fondo", "assets/scenaPrincipal/1.png");
+    this.load.image("fondo", "assets/scenaPrincipal/fondo.png");
     this.load.image("luna", "assets/scenaPrincipal/Luna.png");
     this.load.image("nube", "assets/scenaPrincipal/nube1.png");
     this.load.image("nube2", "assets/scenaPrincipal/nube2.png");

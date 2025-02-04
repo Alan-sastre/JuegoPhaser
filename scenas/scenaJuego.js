@@ -12,7 +12,7 @@ class scenaJuego extends Phaser.Scene {
     this.load.image("GranPlaneta", "assets/scenaJuego/GranPlaneta.png");
     this.load.image("GranPlaneta2", "assets/scenaJuego/GranPlaneta2.png");
     this.load.image("estrellas", "assets/scenaJuego/estrellas.png");
-    this.load.image("fondo", "assets/scenaJuego/fondoAzul.png");
+    this.load.image("fondo1", "assets/scenaJuego/fondoAzul.png");
     this.load.image("bala", "assets/scenaJuego/bala.png");
     this.load.audio("sonidoDisparo", "assets/scenaJuego/disparo.mp3");
     // this.load.audio("musicaJuego", "assets/musicaSpaceLoop.mp3");
@@ -20,7 +20,7 @@ class scenaJuego extends Phaser.Scene {
 
   create() {
     // Ajustar el fondo para que ocupe toda la pantalla
-    this.fondo = this.add.image(0, 0, "fondo").setOrigin(0, 0);
+    this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
     this.fondo.setScale(
       this.scale.width / this.fondo.width,
       this.scale.height / this.fondo.height
