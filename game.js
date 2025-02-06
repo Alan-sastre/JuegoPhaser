@@ -18,8 +18,7 @@ var config = {
     antialias: false, // Asegúrate de suavizar el texto
   },
 
-  scene: [scenaPrincipal,scenaIntro,scenaRompecabezas,scenaJuego],
+  scene: [scenaPrincipal, scenaIntro, scenaRompecabezas, scenaJuego],
 };
 
 var game = new Phaser.Game(config);
-
