@@ -7,10 +7,10 @@ class scenaIntro extends Phaser.Scene {
     this.load.image("fondo2", "assets/scenaIntro/fondo.png");
     this.load.image("capitan", "assets/scenaIntro/capitanRobo.png");
     this.load.audio("teclado", "assets/scenaIntro/teclado.mp3");
-
   }
 
   create() {
+    const { width, height } = this.scale.displaySize;
     const fondo = this.add.image(0, 0, "fondo2");
     fondo.setOrigin(0, 0);
     fondo.displayWidth = this.scale.width;
@@ -29,51 +29,51 @@ class scenaIntro extends Phaser.Scene {
     this.showNextDialogue();
   }
 
-showNextDialogue() {
-  if (this.currentDialogueIndex < this.dialogues.length) {
-    const currentText = this.dialogues[this.currentDialogueIndex];
+  showNextDialogue() {
+    if (this.currentDialogueIndex < this.dialogues.length) {
+      const currentText = this.dialogues[this.currentDialogueIndex];
 
-    if (currentText.startsWith("Pregunta:")) {
-      this.showQuestionWithBoxes(currentText);
+      if (currentText.startsWith("Pregunta:")) {
+        this.showQuestionWithBoxes(currentText);
+      } else {
+        const { dialogBox, dialogText, continueText } = this.showDialog(
+          this,
+          "",
+          50,
+          200,
+          600,
+          150
+        );
+
+        let currentCharIndex = 0;
+        const typingSound = this.sound.add("teclado"); // Cargar sonido
+        typingSound.play({ loop: true, volume: 0.5 }); // Reproducir en bucle con volumen moderado
+
+        const typingAnimation = this.time.addEvent({
+          delay: 50,
+          callback: () => {
+            dialogText.text += currentText[currentCharIndex];
+            currentCharIndex++;
+
+            if (currentCharIndex >= currentText.length) {
+              typingAnimation.remove();
+              typingSound.stop(); // Detener sonido cuando termine el texto
+              continueText.setText("Da click para continuar");
+
+              this.input.once("pointerdown", () => {
+                this.currentDialogueIndex++;
+                this.closeDialog(dialogBox, dialogText, continueText);
+                this.showNextDialogue();
+              });
+            }
+          },
+          loop: true,
+        });
+      }
     } else {
-      const { dialogBox, dialogText, continueText } = this.showDialog(
-        this,
-        "",
-        50,
-        200,
-        600,
-        150
-      );
-
-      let currentCharIndex = 0;
-      const typingSound = this.sound.add("teclado"); // Cargar sonido
-      typingSound.play({ loop: true, volume: 0.5 }); // Reproducir en bucle con volumen moderado
-
-      const typingAnimation = this.time.addEvent({
-        delay: 50,
-        callback: () => {
-          dialogText.text += currentText[currentCharIndex];
-          currentCharIndex++;
-
-          if (currentCharIndex >= currentText.length) {
-            typingAnimation.remove();
-            typingSound.stop(); // Detener sonido cuando termine el texto
-            continueText.setText("Da click para continuar");
-
-            this.input.once("pointerdown", () => {
-              this.currentDialogueIndex++;
-              this.closeDialog(dialogBox, dialogText, continueText);
-              this.showNextDialogue();
-            });
-          }
-        },
-        loop: true,
-      });
+      this.scene.start("game");
     }
-  } else {
-    this.scene.start("game");
   }
-}
   showQuestionWithBoxes(questionText) {
     const question = questionText.split(":")[1].trim();
 
@@ -263,6 +263,8 @@ showNextDialogue() {
     );
 
     let currentCharIndex = 0;
+    const typingSound = this.sound.add("teclado"); // Cargar sonido
+    typingSound.play({ loop: true, volume: 0.5 }); // Reproducir en bucle con volumen moderado
 
     const typingAnimation = this.time.addEvent({
       delay: 50,
@@ -272,7 +274,9 @@ showNextDialogue() {
 
         if (currentCharIndex >= feedbackText.length) {
           typingAnimation.remove();
+          typingSound.stop(); // Detener sonido cuando termine el texto
           continueText.setText("Da click para continuar");
+
           this.input.once("pointerdown", () => {
             this.closeDialog(dialogBox, dialogText, continueText);
             this.scene.start("scenaRompecabezas");

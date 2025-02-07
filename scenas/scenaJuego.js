@@ -5,7 +5,7 @@ class scenaJuego extends Phaser.Scene {
     this.tiempoEsperaDisparo = 300;
     this.score = 0;
     this.vida = 100;
-    this.isMobile = false; // Bandera para detectar si es un dispositivo móvil
+    this.isMobile = false;
   }
 
   preload() {
@@ -29,9 +29,10 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
-    // Detectar si es un dispositivo móvil
-    this.isMobile =
-      this.sys.game.device.os.android || this.sys.game.device.os.iOS;
+    
+   this.isMobile = this.sys.game.device.os.android || this.sys.game.device.os.iOS;
+    const { width, height } = this.scale.displaySize;
+
 
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
@@ -135,18 +136,19 @@ class scenaJuego extends Phaser.Scene {
   }
 
   addMobileControls() {
-    // Botón para disparar
-    this.botonDisparo = this.add
-      .circle(this.scale.width - 50, this.scale.height - 50, 30, 0xffffff, 0.5)
-      .setInteractive();
-    this.botonDisparo.on("pointerdown", () => {
-      this.disparar({ x: this.scale.width, y: this.scale.height });
+    const mitadPantalla = this.scale.width / 2;
+
+    // Área táctil para mover la nave (parte izquierda)
+    this.input.on("pointermove", (pointer) => {
+      if (pointer.x < mitadPantalla && pointer.isDown) {
+        this.moverNave(pointer);
+      }
     });
 
-    // Área táctil para mover la nave
-    this.input.on("pointermove", (pointer) => {
-      if (pointer.isDown) {
-        this.moverNave(pointer);
+    // Disparar cuando se toca la parte derecha
+    this.input.on("pointerdown", (pointer) => {
+      if (pointer.x > mitadPantalla) {
+        this.disparar(pointer);
       }
     });
   }
@@ -176,10 +178,8 @@ class scenaJuego extends Phaser.Scene {
   }
 
   moverNave(pointer) {
-    if (pointer.x < this.scale.width / 2 || this.isMobile) {
-      this.nave.x = pointer.x;
-      this.nave.y = pointer.y;
-    }
+    this.nave.x = pointer.x;
+    this.nave.y = pointer.y;
   }
 
   generarEnemigo() {
@@ -197,7 +197,7 @@ class scenaJuego extends Phaser.Scene {
   }
 
   disparar(pointer) {
-    if (pointer.x > this.scale.width / 20 && this.puedeDisparar) {
+    if (this.puedeDisparar) {
       const bala = this.balas.get(this.nave.x + 40, this.nave.y + 10);
       if (bala) {
         bala.setActive(true);
