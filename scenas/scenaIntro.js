@@ -17,11 +17,17 @@ class scenaIntro extends Phaser.Scene {
     fondo.displayWidth = this.scale.width;
     fondo.displayHeight = this.scale.height;
 
-    this.add.image(800, 320, "capitan").setScale(0.5);
+    this.add.image(800, 320, "capitan").setScale(0.2);
 
-    const nivel1Image = this.add.image(width - 10, 10, "nivel"); // Posición en la esquina superior derecha
-    nivel1Image.setOrigin(5, 0); // Ajustar el origen a la esquina superior derecha
-    nivel1Image.setScale(0.2); // Ajustar la escala si es necesario
+    const nivel1Image = this.add.image(width - 100, 30, "nivel");
+    nivel1Image.setOrigin(0.5); // Origen centrado
+    nivel1Image.setScale(0.2);
+
+    // Hacer la imagen responsive
+    this.scale.on("resize", (gameSize) => {
+      const newWidth = gameSize.width;
+      nivel1Image.x = newWidth - 100;
+    });
 
     this.dialogues = [
       "!Antes de comenzar el nivel, los jugadores recibirán una breve explicación interactiva sobre los conceptos básicos de robótica y programación:",
