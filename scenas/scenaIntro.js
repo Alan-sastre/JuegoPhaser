@@ -7,6 +7,7 @@ class scenaIntro extends Phaser.Scene {
     this.load.image("fondo2", "assets/scenaIntro/fondo.png");
     this.load.image("capitan", "assets/scenaIntro/capitanRobo.png");
     this.load.audio("teclado", "assets/scenaIntro/teclado.mp3");
+    this.load.image("nivel", "assets/scenaIntro/nivel1.jpg");
   }
 
   create() {
@@ -17,6 +18,10 @@ class scenaIntro extends Phaser.Scene {
     fondo.displayHeight = this.scale.height;
 
     this.add.image(800, 320, "capitan").setScale(0.5);
+
+    const nivel1Image = this.add.image(width - 10, 10, "nivel"); // Posición en la esquina superior derecha
+    nivel1Image.setOrigin(5, 0); // Ajustar el origen a la esquina superior derecha
+    nivel1Image.setScale(0.2); // Ajustar la escala si es necesario
 
     this.dialogues = [
       "!Antes de comenzar el nivel, los jugadores recibirán una breve explicación interactiva sobre los conceptos básicos de robótica y programación:",

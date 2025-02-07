@@ -15,6 +15,7 @@ class scenaRompecabezas extends Phaser.Scene {
     this.load.image("brazosI", "assets/scenaRompecabezas/brazoss.png");
     this.load.audio("sonidoCorrecto", "assets/scenaRompecabezas/tornillos.mp3");
     this.load.audio("sonidoIncorrecto", "assets/scenaRompecabezas/error.mp3");
+    this.load.image("nivel", "assets/scenaRompecabezas/nivel1.jpg");
   }
 
   create() {
@@ -28,6 +29,11 @@ class scenaRompecabezas extends Phaser.Scene {
     const fondo = this.add.image(0, 0, "fondo3").setOrigin(0, 0);
     fondo.displayWidth = screenWidth;
     fondo.displayHeight = screenHeight;
+
+    // Agregar la imagen nivel1.jpg en la esquina superior derecha
+    const nivel1Image = this.add.image(screenWidth - 10, 10, "nivel"); // Posición en la esquina superior derecha
+    nivel1Image.setOrigin(1, 0); // Ajustar el origen a la esquina superior derecha
+    nivel1Image.setScale(0.2 * scaleFactor); // Ajustar la escala en función del factor de escala
 
     // Texto para mostrar la pieza seleccionada
     this.textoSeleccionado = this.add
@@ -75,6 +81,7 @@ class scenaRompecabezas extends Phaser.Scene {
       },
     };
 
+    // Agregar imágenes de brazos
     this.add
       .image(100 * scaleFactor, 210 * scaleFactor, "brazos")
       .setOrigin(0, 0);

@@ -17,6 +17,7 @@ class scenaJuego extends Phaser.Scene {
     this.load.image("estrellas", "assets/scenaJuego/estrellas.png");
     this.load.image("fondo1", "assets/scenaJuego/a.jpg");
     this.load.image("bala", "assets/scenaJuego/bala.png");
+    this.load.image("nivel", "assets/scenaJuego/nivel1.jpg");
     this.load.spritesheet("enemigo", "assets/scenaJuego/enemigo.png", {
       frameWidth: 32,
       frameHeight: 32,
@@ -29,10 +30,9 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
-    
-   this.isMobile = this.sys.game.device.os.android || this.sys.game.device.os.iOS;
+    this.isMobile =
+      this.sys.game.device.os.android || this.sys.game.device.os.iOS;
     const { width, height } = this.scale.displaySize;
-
 
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
@@ -40,6 +40,12 @@ class scenaJuego extends Phaser.Scene {
       this.scale.width / this.fondo.width,
       this.scale.height / this.fondo.height
     );
+
+    // Añadir la imagen nivel1.jpg en la esquina superior derecha
+    const nivel1Image = this.add
+      .image(900, 20, "nivel")
+      .setScale(0.2)
+      .setDepth(10);
 
     // Añadir elementos del juego
     this.background = this.add.image(500, 350, "background").setScale(0.3);
