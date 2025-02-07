@@ -4,6 +4,7 @@ class scenaPrincipal extends Phaser.Scene {
   }
 
   preload() {
+    // Cargar imágenes y recursos
     this.load.image("tierra", "assets/scenaPrincipal/icon.png");
     this.load.image("fondo", "assets/scenaPrincipal/fondo.png");
     this.load.image("luna", "assets/scenaPrincipal/Luna.png");
@@ -23,11 +24,13 @@ class scenaPrincipal extends Phaser.Scene {
   create() {
     const { width, height } = this.scale;
 
+    // Fondo de la escena
     const fondo = this.add.image(0, 0, "fondo");
     fondo.setOrigin(0, 0);
     fondo.displayWidth = width;
     fondo.displayHeight = height;
 
+    // Añadir elementos visuales
     this.Terran = this.add
       .image(width * 0.4, height * 0.15, "tierra")
       .setScale(0.5);
@@ -37,6 +40,7 @@ class scenaPrincipal extends Phaser.Scene {
       .image(width * 0.1, height * 0.2, "nube2")
       .setScale(0.3);
 
+    // Animación de la estrella parpadeante
     this.anims.create({
       key: "parpadear",
       frames: this.anims.generateFrameNumbers("estrella", { start: 0, end: 3 }),
@@ -44,19 +48,7 @@ class scenaPrincipal extends Phaser.Scene {
       repeat: -1,
     });
 
-    const estrella = this.add.sprite(width * 0.5, height * 0.7, "estrella");
-    estrella.anims.play("parpadear");
-
-    this.anims.create({
-      key: "fugaz",
-      frames: this.anims.generateFrameNumbers("fuga", { start: 0, end: 9 }),
-      frameRate: 7,
-      repeat: -1,
-    });
-
-    const estrellaFugaz = this.add.sprite(width * 0.6, height * 0.2, "fuga");
-    estrellaFugaz.anims.play("fugaz");
-
+    // Texto en la parte inferior
     const titulo = this.add.text(
       width / 2,
       height * 0.9,
@@ -70,14 +62,40 @@ class scenaPrincipal extends Phaser.Scene {
     );
     titulo.setOrigin(0.5);
 
+    // Obtener dimensiones del texto
+    const tituloWidth = titulo.width;
+    const tituloHeight = titulo.height;
+
+    // Añadir estrella al lado del texto
+    const estrella = this.add.sprite(
+      titulo.x + tituloWidth / 2 + 20, // Posición X: al lado del texto
+      titulo.y, // Posición Y: misma altura que el texto
+      "estrella"
+    );
+    estrella.anims.play("parpadear");
+
+    // Animación de la estrella fugaz
+    this.anims.create({
+      key: "fugaz",
+      frames: this.anims.generateFrameNumbers("fuga", { start: 0, end: 9 }),
+      frameRate: 7,
+      repeat: -1,
+    });
+
+    const estrellaFugaz = this.add.sprite(width * 0.6, height * 0.2, "fuga");
+    estrellaFugaz.anims.play("fugaz");
+
+    // Música de fondo
     const music = this.sound.add("musica", { loop: true, volume: 0.1 });
     music.play();
 
+    // Capa negra para la transición
     this.capaNegra = this.add.graphics();
     this.capaNegra.fillStyle(0x000000, 1);
     this.capaNegra.fillRect(0, 0, width, height);
     this.capaNegra.setAlpha(0);
 
+    // Función para iniciar la transición
     const iniciarTransicion = () => {
       this.tweens.add({
         targets: this.capaNegra,
@@ -90,14 +108,17 @@ class scenaPrincipal extends Phaser.Scene {
       });
     };
 
+    // Eventos para iniciar la transición
     this.input.keyboard.on("keydown-SPACE", iniciarTransicion);
     this.input.on("pointerdown", iniciarTransicion);
   }
 
   update() {
+    // Mover las nubes
     this.nube.x -= 0.3;
     this.nube2.x += 0.3;
 
+    // Reiniciar posición de las nubes al salir de la pantalla
     if (this.nube.x < -50) this.nube.x = this.scale.width + 50;
     if (this.nube2.x > this.scale.width + 50) this.nube2.x = -50;
   }
