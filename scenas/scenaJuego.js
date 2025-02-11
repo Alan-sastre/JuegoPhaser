@@ -154,8 +154,8 @@ class scenaJuego extends Phaser.Scene {
     const botonScale = 1.5; // Ajusta este valor para cambiar el tamaño de los botones
 
     // Posicionamiento de los botones de movimiento (abajo a la derecha)
-    const offsetX = 45; // Espaciado horizontal entre botones
-    const offsetY = 45; // Espaciado vertical entre botones
+    const offsetX = 50; // Espaciado horizontal entre botones
+    const offsetY = 50; // Espaciado vertical entre botones
     const startX = width + 400; // Posición inicial en X (derecha)
     const startY = height + 200; // Posición inicial en Y (abajo)
 
