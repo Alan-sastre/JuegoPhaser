@@ -189,7 +189,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Botón de disparo
     this.botonDisparo = this.add
-      .image(100, height + 220, "botonDisparo")
+      .image(200, height + 220, "botonDisparo")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
