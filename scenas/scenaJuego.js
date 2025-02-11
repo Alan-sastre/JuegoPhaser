@@ -153,6 +153,7 @@ class scenaJuego extends Phaser.Scene {
     // Tamaño de los botones (más grandes)
     const botonScale = 1.5;
     const botonDisparoScale = 2.0; // Tamaño más grande para el botón de disparo
+
     // Posicionamiento de los botones de movimiento (abajo a la derecha)
     const offsetX = 60;
     const offsetY = 60;
@@ -191,7 +192,7 @@ class scenaJuego extends Phaser.Scene {
     this.botonDisparo = this.add
       .image(200, height + 220, "botonDisparo")
       .setInteractive()
-      .setScale(botonScale)
+      .setScale(botonDisparoScale)
       .setDepth(10);
 
     // Eventos de los botones de movimiento
