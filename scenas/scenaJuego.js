@@ -48,7 +48,6 @@ class scenaJuego extends Phaser.Scene {
       this.scale.height / this.fondo.height
     );
 
-
     const nivel1Image = this.add
       .image(900, 20, "nivel")
       .setScale(0.2)
@@ -151,31 +150,48 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    // Crear botones virtuales
+    // Tamaño de los botones (más grandes)
+    const botonScale = 0.8; // Ajusta este valor para cambiar el tamaño de los botones
+
+    // Posicionamiento de los botones de movimiento (abajo a la derecha)
+    const offsetX = 100; // Espaciado horizontal entre botones
+    const offsetY = 100; // Espaciado vertical entre botones
+    const startX = width - 250; // Posición inicial en X (derecha)
+    const startY = height - 150; // Posición inicial en Y (abajo)
+
+    // Botón de arriba
     this.botonArriba = this.add
-      .image(width - 150, height - 150, "botonArriba")
+      .image(startX + offsetX, startY - offsetY, "botonArriba")
       .setInteractive()
-      .setScale(0.5)
+      .setScale(botonScale)
       .setDepth(10);
+
+    // Botón de abajo
     this.botonAbajo = this.add
-      .image(width - 150, height - 50, "botonAbajo")
+      .image(startX + offsetX, startY + offsetY, "botonAbajo")
       .setInteractive()
-      .setScale(0.5)
+      .setScale(botonScale)
       .setDepth(10);
+
+    // Botón de izquierda
     this.botonIzquierda = this.add
-      .image(width - 250, height - 100, "botonIzquierda")
+      .image(startX, startY, "botonIzquierda")
       .setInteractive()
-      .setScale(0.5)
+      .setScale(botonScale)
       .setDepth(10);
+
+    // Botón de derecha
     this.botonDerecha = this.add
-      .image(width - 50, height - 100, "botonDerecha")
+      .image(startX + 2 * offsetX, startY, "botonDerecha")
       .setInteractive()
-      .setScale(0.5)
+      .setScale(botonScale)
       .setDepth(10);
+
+    // Botón de disparo (abajo a la izquierda)
     this.botonDisparo = this.add
       .image(100, height - 100, "botonDisparo")
       .setInteractive()
-      .setScale(0.5)
+      .setScale(botonScale)
       .setDepth(10);
 
     // Eventos de los botones
