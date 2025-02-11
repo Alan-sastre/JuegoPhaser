@@ -29,11 +29,11 @@ class scenaJuego extends Phaser.Scene {
     this.load.audio("sonidoGameOver", "assets/scenaJuego/game_over.mp3");
 
     // Cargar imágenes de los botones
-    this.load.image("botonArriba", "assets/botones/arriba.png");
-    this.load.image("botonAbajo", "assets/botones/abajo.png");
-    this.load.image("botonIzquierda", "assets/botones/izquierda.png");
-    this.load.image("botonDerecha", "assets/botones/derecha.png");
-    this.load.image("botonDisparo", "assets/botones/disparo.png");
+    this.load.image("botonArriba", "assets/scenaJuego/arriba.png");
+    this.load.image("botonAbajo", "assets/scenaJuego/abajo.png");
+    this.load.image("botonIzquierda", "assets/scenaJuego/izquierda.png");
+    this.load.image("botonDerecha", "assets/scenaJuego/derecha.png");
+    this.load.image("botonDisparo", "assets/scenaJuego/disparo.png");
   }
 
   create() {
@@ -48,7 +48,7 @@ class scenaJuego extends Phaser.Scene {
       this.scale.height / this.fondo.height
     );
 
-   
+
     const nivel1Image = this.add
       .image(900, 20, "nivel")
       .setScale(0.2)
