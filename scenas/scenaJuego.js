@@ -27,6 +27,13 @@ class scenaJuego extends Phaser.Scene {
     this.load.audio("musicaJuego", "assets/scenaJuego/musicaPelea.mp3");
     this.load.audio("sonidoExplosion", "assets/scenaJuego/destruction.mp3");
     this.load.audio("sonidoGameOver", "assets/scenaJuego/game_over.mp3");
+
+    // Cargar imágenes de los botones
+    this.load.image("botonArriba", "assets/botones/arriba.png");
+    this.load.image("botonAbajo", "assets/botones/abajo.png");
+    this.load.image("botonIzquierda", "assets/botones/izquierda.png");
+    this.load.image("botonDerecha", "assets/botones/derecha.png");
+    this.load.image("botonDisparo", "assets/botones/disparo.png");
   }
 
   create() {
@@ -41,7 +48,7 @@ class scenaJuego extends Phaser.Scene {
       this.scale.height / this.fondo.height
     );
 
-    // Añadir la imagen nivel1.jpg en la esquina superior derecha
+   
     const nivel1Image = this.add
       .image(900, 20, "nivel")
       .setScale(0.2)
@@ -142,20 +149,66 @@ class scenaJuego extends Phaser.Scene {
   }
 
   addMobileControls() {
-    const mitadPantalla = this.scale.width / 2;
+    const { width, height } = this.scale.displaySize;
 
-    // Área táctil para mover la nave (parte izquierda)
-    this.input.on("pointermove", (pointer) => {
-      if (pointer.x < mitadPantalla && pointer.isDown) {
-        this.moverNave(pointer);
-      }
+    // Crear botones virtuales
+    this.botonArriba = this.add
+      .image(width - 150, height - 150, "botonArriba")
+      .setInteractive()
+      .setScale(0.5)
+      .setDepth(10);
+    this.botonAbajo = this.add
+      .image(width - 150, height - 50, "botonAbajo")
+      .setInteractive()
+      .setScale(0.5)
+      .setDepth(10);
+    this.botonIzquierda = this.add
+      .image(width - 250, height - 100, "botonIzquierda")
+      .setInteractive()
+      .setScale(0.5)
+      .setDepth(10);
+    this.botonDerecha = this.add
+      .image(width - 50, height - 100, "botonDerecha")
+      .setInteractive()
+      .setScale(0.5)
+      .setDepth(10);
+    this.botonDisparo = this.add
+      .image(100, height - 100, "botonDisparo")
+      .setInteractive()
+      .setScale(0.5)
+      .setDepth(10);
+
+    // Eventos de los botones
+    this.botonArriba.on("pointerdown", () => {
+      this.nave.setVelocityY(-200);
+    });
+    this.botonArriba.on("pointerup", () => {
+      this.nave.setVelocityY(0);
     });
 
-    // Disparar cuando se toca la parte derecha
-    this.input.on("pointerdown", (pointer) => {
-      if (pointer.x > mitadPantalla) {
-        this.disparar(pointer);
-      }
+    this.botonAbajo.on("pointerdown", () => {
+      this.nave.setVelocityY(200);
+    });
+    this.botonAbajo.on("pointerup", () => {
+      this.nave.setVelocityY(0);
+    });
+
+    this.botonIzquierda.on("pointerdown", () => {
+      this.nave.setVelocityX(-200);
+    });
+    this.botonIzquierda.on("pointerup", () => {
+      this.nave.setVelocityX(0);
+    });
+
+    this.botonDerecha.on("pointerdown", () => {
+      this.nave.setVelocityX(200);
+    });
+    this.botonDerecha.on("pointerup", () => {
+      this.nave.setVelocityX(0);
+    });
+
+    this.botonDisparo.on("pointerdown", () => {
+      this.disparar();
     });
   }
 
@@ -202,7 +255,7 @@ class scenaJuego extends Phaser.Scene {
     enemigo.outOfBoundsKill = true;
   }
 
-  disparar(pointer) {
+  disparar() {
     if (this.puedeDisparar) {
       const bala = this.balas.get(this.nave.x + 40, this.nave.y + 10);
       if (bala) {
@@ -242,23 +295,6 @@ class scenaJuego extends Phaser.Scene {
     if (this.estrellas.x < -50) this.estrellas.x = 850;
     if (this.estrellas1.x < -50) this.estrellas1.x = 850;
     if (this.estrellas2.x < -50) this.estrellas2.x = 850;
-
-    // Reiniciar la velocidad de la nave
-    this.nave.setVelocity(0);
-
-    // Controles de teclado (solo para PC)
-    if (!this.isMobile) {
-      if (this.cursors.left.isDown) {
-        this.nave.setVelocityX(-200);
-      } else if (this.cursors.right.isDown) {
-        this.nave.setVelocityX(200);
-      }
-      if (this.cursors.up.isDown) {
-        this.nave.setVelocityY(-200);
-      } else if (this.cursors.down.isDown) {
-        this.nave.setVelocityY(200);
-      }
-    }
 
     // Eliminar balas fuera de pantalla
     this.balas.children.each((bala) => {
