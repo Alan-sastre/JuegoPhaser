@@ -14,8 +14,8 @@ var config = {
     },
   },
   render: {
-    pixelArt: true, // Cambiar a true si usas gráficos pixelados
-    antialias: false, // Asegúrate de suavizar el texto
+    pixelArt: true, 
+    antialias: false,
   },
 
    scene: [scenaJuego],
