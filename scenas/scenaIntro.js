@@ -17,10 +17,13 @@ class scenaIntro extends Phaser.Scene {
     fondo.displayWidth = this.scale.width;
     fondo.displayHeight = this.scale.height;
 
-    this.add.image(800, 320, "capitan").setScale(0.5);
+    // Ajustar la posición del capitán para móviles
+    const capitan = this.add
+      .image(width * 0.8, height * 0.5, "capitan")
+      .setScale(0.5);
 
     const nivel1Image = this.add.image(width - 100, 30, "nivel");
-    nivel1Image.setOrigin(0.5); // Origen centrado
+    nivel1Image.setOrigin(0.5);
     nivel1Image.setScale(0.2);
 
     // Hacer la imagen responsive
@@ -52,13 +55,13 @@ class scenaIntro extends Phaser.Scene {
           "",
           50,
           200,
-          600,
+          this.scale.width - 100,
           150
         );
 
         let currentCharIndex = 0;
-        const typingSound = this.sound.add("teclado"); // Cargar sonido
-        typingSound.play({ loop: true, volume: 0.5 }); // Reproducir en bucle con volumen moderado
+        const typingSound = this.sound.add("teclado");
+        typingSound.play({ loop: true, volume: 0.5 });
 
         const typingAnimation = this.time.addEvent({
           delay: 50,
@@ -68,8 +71,8 @@ class scenaIntro extends Phaser.Scene {
 
             if (currentCharIndex >= currentText.length) {
               typingAnimation.remove();
-              typingSound.stop(); // Detener sonido cuando termine el texto
-              continueText.setText("Da click para continuar");
+              typingSound.stop();
+              continueText.setText("Toca para continuar");
 
               this.input.once("pointerdown", () => {
                 this.currentDialogueIndex++;
@@ -85,19 +88,18 @@ class scenaIntro extends Phaser.Scene {
       this.scene.start("game");
     }
   }
+
   showQuestionWithBoxes(questionText) {
     const question = questionText.split(":")[1].trim();
 
-    // Ajustar la posición del texto de la pregunta un poco más arriba
     const questionBox = this.add.graphics();
     questionBox.fillStyle(0x000000, 0.8);
-    questionBox.fillRoundedRect(50, 150, 600, 100, 15); // Cambiar la posición Y de 200 a 150
+    questionBox.fillRoundedRect(50, 150, this.scale.width - 100, 100, 15);
 
     const questionTextDisplay = this.add.text(60, 160, question, {
-      // Cambiar la posición Y de 210 a 160
       fontSize: "20px",
       fill: "#ffffff",
-      wordWrap: { width: 580 },
+      wordWrap: { width: this.scale.width - 120 },
     });
 
     const options = [
@@ -133,25 +135,20 @@ class scenaIntro extends Phaser.Scene {
       },
     ];
 
-    this.correctAnswersSelected = 0; // Contador de respuestas correctas seleccionadas
-    this.selectedCorrectOptions = []; // Almacena las opciones correctas seleccionadas
+    this.correctAnswersSelected = 0;
+    this.selectedCorrectOptions = [];
 
     const optionBoxes = [];
-    const startY = 300; // Posición inicial en Y
-    const boxWidth = 250; // Ancho del botón
-    const boxHeight = 50; // Altura del botón
-    const spacing = 20; // Espaciado entre botones
-    const columnSpacing = 50; // Espaciado entre columnas
+    const startY = 300;
+    const boxWidth = (this.scale.width - 100) / 2 - 10;
+    const boxHeight = 50;
+    const spacing = 20;
 
     options.forEach((option, index) => {
-      const column = index % 2 === 0 ? 0 : 1; // 0 para la columna izquierda, 1 para la derecha
-      const row = Math.floor(index / 2); // Fila actual
+      const column = index % 2;
+      const row = Math.floor(index / 2);
 
-      const boxX =
-        column === 0
-          ? this.scale.width / 2 - boxWidth - columnSpacing // Columna izquierda
-          : this.scale.width / 2 + columnSpacing; // Columna derecha
-
+      const boxX = 50 + column * (boxWidth + 10);
       const boxY = startY + row * (boxHeight + spacing);
 
       const optionBox = this.add.graphics();
@@ -200,22 +197,21 @@ class scenaIntro extends Phaser.Scene {
   ) {
     if (isCorrect) {
       if (!this.selectedCorrectOptions.includes(optionText.text)) {
-        this.selectedCorrectOptions.push(optionText.text); // Registrar la opción correcta seleccionada
-        this.correctAnswersSelected++; // Incrementar el contador de respuestas correctas
+        this.selectedCorrectOptions.push(optionText.text);
+        this.correctAnswersSelected++;
 
         optionBox.clear();
-        optionBox.fillStyle(0x28a745, 1); // Verde para correcto
+        optionBox.fillStyle(0x28a745, 1);
         optionBox.fillRoundedRect(
           optionText.x - 10,
           optionText.y - 15,
-          250,
+          optionText.width + 20,
           50,
           10
         );
 
         if (this.correctAnswersSelected === 2) {
-          // Si se seleccionan ambas respuestas correctas
-          this.showCongratulations(); // Mostrar mensaje de felicitación
+          this.showCongratulations();
           this.time.delayedCall(2000, () => {
             questionBox.destroy();
             questionTextDisplay.destroy();
@@ -229,11 +225,11 @@ class scenaIntro extends Phaser.Scene {
       }
     } else {
       optionBox.clear();
-      optionBox.fillStyle(0xdc3545, 1); // Rojo para incorrecto
+      optionBox.fillStyle(0xdc3545, 1);
       optionBox.fillRoundedRect(
         optionText.x - 10,
         optionText.y - 15,
-        250,
+        optionText.width + 20,
         50,
         10
       );
@@ -253,7 +249,7 @@ class scenaIntro extends Phaser.Scene {
         fontStyle: "bold",
       }
     );
-    congratsText.setOrigin(0.5, 0.5); // Centrar el texto
+    congratsText.setOrigin(0.5, 0.5);
 
     this.time.delayedCall(2000, () => {
       congratsText.destroy();
@@ -269,13 +265,13 @@ class scenaIntro extends Phaser.Scene {
       "",
       50,
       200,
-      600,
+      this.scale.width - 100,
       150
     );
 
     let currentCharIndex = 0;
-    const typingSound = this.sound.add("teclado"); // Cargar sonido
-    typingSound.play({ loop: true, volume: 0.5 }); // Reproducir en bucle con volumen moderado
+    const typingSound = this.sound.add("teclado");
+    typingSound.play({ loop: true, volume: 0.5 });
 
     const typingAnimation = this.time.addEvent({
       delay: 50,
@@ -285,8 +281,8 @@ class scenaIntro extends Phaser.Scene {
 
         if (currentCharIndex >= feedbackText.length) {
           typingAnimation.remove();
-          typingSound.stop(); // Detener sonido cuando termine el texto
-          continueText.setText("Da click para continuar");
+          typingSound.stop();
+          continueText.setText("Toca para continuar");
 
           this.input.once("pointerdown", () => {
             this.closeDialog(dialogBox, dialogText, continueText);
@@ -301,12 +297,12 @@ class scenaIntro extends Phaser.Scene {
   showAlert(message, color) {
     const alertBox = this.add.graphics();
     alertBox.fillStyle(color, 0.8);
-    alertBox.fillRoundedRect(100, 50, 600, 50, 15);
+    alertBox.fillRoundedRect(100, 50, this.scale.width - 200, 50, 15);
 
     const alertText = this.add.text(110, 60, message, {
-      fontSize: "18px", // Reducir el tamaño de la fuente para que quepa el texto
+      fontSize: "18px",
       fill: "#ffffff",
-      wordWrap: { width: 580 }, // Ajustar el texto dentro del cuadro
+      wordWrap: { width: this.scale.width - 220 },
     });
 
     this.time.delayedCall(2000, () => {
