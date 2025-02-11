@@ -156,8 +156,8 @@ class scenaJuego extends Phaser.Scene {
     // Posicionamiento de los botones de movimiento (abajo a la derecha)
     const offsetX = 60;
     const offsetY = 60;
-    const startX = width - 200; // Ajustado para que esté en la esquina inferior derecha
-    const startY = height - 100;
+    const startX = width + 400; // Ajustado para que esté en la esquina inferior derecha
+    const startY = height + 200;
 
     // Botón de arriba
     this.botonArriba = this.add
@@ -187,9 +187,9 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo (abajo a la izquierda)
+    // Botón de disparo
     this.botonDisparo = this.add
-      .image(100, height - 100, "botonDisparo")
+      .image(100, height + 220, "botonDisparo")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
