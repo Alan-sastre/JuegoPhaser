@@ -151,13 +151,13 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale.displaySize;
 
     // Tamaño de los botones (más grandes)
-    const botonScale = 1.5; // Ajusta este valor para cambiar el tamaño de los botones
+    const botonScale = 1.5;
 
     // Posicionamiento de los botones de movimiento (abajo a la derecha)
-    const offsetX = 60; // Espaciado horizontal entre botones
-    const offsetY = 60; // Espaciado vertical entre botones
-    const startX = width + 400; // Posición inicial en X (derecha)
-    const startY = height + 200; // Posición inicial en Y (abajo)
+    const offsetX = 60;
+    const offsetY = 60;
+    const startX = width - 200; // Ajustado para que esté en la esquina inferior derecha
+    const startY = height - 100;
 
     // Botón de arriba
     this.botonArriba = this.add
@@ -189,12 +189,12 @@ class scenaJuego extends Phaser.Scene {
 
     // Botón de disparo (abajo a la izquierda)
     this.botonDisparo = this.add
-      .image(100, height + 220, "botonDisparo")
+      .image(100, height - 100, "botonDisparo")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
-    // Eventos de los botones
+    // Eventos de los botones de movimiento
     this.botonArriba.on("pointerdown", () => {
       this.nave.setVelocityY(-200);
     });
@@ -223,10 +223,12 @@ class scenaJuego extends Phaser.Scene {
       this.nave.setVelocityX(0);
     });
 
+    // Evento del botón de disparo
     this.botonDisparo.on("pointerdown", () => {
       this.disparar();
     });
   }
+
   actualizarBarraVida() {
     this.barraVida.clear();
     this.barraVida.fillStyle(0xff0000, 1);
