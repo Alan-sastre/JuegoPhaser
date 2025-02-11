@@ -6,6 +6,11 @@ class scenaJuego extends Phaser.Scene {
     this.score = 0;
     this.vida = 100;
     this.isMobile = false;
+    // Variables para controlar el movimiento
+    this.movingUp = false;
+    this.movingDown = false;
+    this.movingLeft = false;
+    this.movingRight = false;
   }
 
   preload() {
@@ -150,14 +155,14 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    // Tamaño de los botones (más grandes)
+    // Tamaño de los botones
     const botonScale = 1.5;
-    const botonDisparoScale = 3; // Tamaño más grande para el botón de disparo
+    const botonDisparoScale = 2.0;
 
-    // Posicionamiento de los botones de movimiento (abajo a la derecha)
+    // Posicionamiento de los botones
     const offsetX = 60;
     const offsetY = 60;
-    const startX = width + 400; // Ajustado para que esté en la esquina inferior derecha
+    const startX = width + 400;
     const startY = height + 200;
 
     // Botón de arriba
@@ -197,31 +202,43 @@ class scenaJuego extends Phaser.Scene {
 
     // Eventos de los botones de movimiento
     this.botonArriba.on("pointerdown", () => {
-      this.nave.setVelocityY(-200);
+      this.movingUp = true;
     });
     this.botonArriba.on("pointerup", () => {
-      this.nave.setVelocityY(0);
+      this.movingUp = false;
+    });
+    this.botonArriba.on("pointerout", () => {
+      this.movingUp = false;
     });
 
     this.botonAbajo.on("pointerdown", () => {
-      this.nave.setVelocityY(200);
+      this.movingDown = true;
     });
     this.botonAbajo.on("pointerup", () => {
-      this.nave.setVelocityY(0);
+      this.movingDown = false;
+    });
+    this.botonAbajo.on("pointerout", () => {
+      this.movingDown = false;
     });
 
     this.botonIzquierda.on("pointerdown", () => {
-      this.nave.setVelocityX(-200);
+      this.movingLeft = true;
     });
     this.botonIzquierda.on("pointerup", () => {
-      this.nave.setVelocityX(0);
+      this.movingLeft = false;
+    });
+    this.botonIzquierda.on("pointerout", () => {
+      this.movingLeft = false;
     });
 
     this.botonDerecha.on("pointerdown", () => {
-      this.nave.setVelocityX(200);
+      this.movingRight = true;
     });
     this.botonDerecha.on("pointerup", () => {
-      this.nave.setVelocityX(0);
+      this.movingRight = false;
+    });
+    this.botonDerecha.on("pointerout", () => {
+      this.movingRight = false;
     });
 
     // Evento del botón de disparo
@@ -313,6 +330,22 @@ class scenaJuego extends Phaser.Scene {
     if (this.estrellas.x < -50) this.estrellas.x = 850;
     if (this.estrellas1.x < -50) this.estrellas1.x = 850;
     if (this.estrellas2.x < -50) this.estrellas2.x = 850;
+
+    // Actualizar movimiento de la nave en móvil
+    if (this.isMobile) {
+      // Resetear velocidad
+      let velocityX = 0;
+      let velocityY = 0;
+
+      // Aplicar velocidades según los botones presionados
+      if (this.movingUp) velocityY = -200;
+      if (this.movingDown) velocityY = 200;
+      if (this.movingLeft) velocityX = -200;
+      if (this.movingRight) velocityX = 200;
+
+      // Aplicar las velocidades a la nave
+      this.nave.setVelocity(velocityX, velocityY);
+    }
 
     // Eliminar balas fuera de pantalla
     this.balas.children.each((bala) => {
