@@ -14,11 +14,11 @@ var config = {
     },
   },
   render: {
-    pixelArt: true, 
+    pixelArt: true,
     antialias: false,
   },
 
-   scene: [scenaJuego],
+   scene: [scenaPrincipal,scenaIntro,scenaRompecabezas,scenaJuego],
 };
 
 var game = new Phaser.Game(config);
