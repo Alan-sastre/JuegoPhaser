@@ -151,13 +151,13 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale.displaySize;
 
     // Tamaño de los botones (más grandes)
-    const botonScale = 1.2; // Ajusta este valor para cambiar el tamaño de los botones
+    const botonScale = 0.8; // Ajusta este valor para cambiar el tamaño de los botones
 
     // Posicionamiento de los botones de movimiento (abajo a la derecha)
-    const offsetX = 50; // Espaciado horizontal entre botones
-    const offsetY = 50; // Espaciado vertical entre botones
-    const startX = width - 20; // Posición inicial en X (derecha)
-    const startY = height - 5; // Posición inicial en Y (abajo)
+    const offsetX = 60; // Espaciado horizontal entre botones
+    const offsetY = 60; // Espaciado vertical entre botones
+    const startX = width - 150; // Posición inicial en X (derecha)
+    const startY = height - 150; // Posición inicial en Y (abajo)
 
     // Botón de arriba
     this.botonArriba = this.add
@@ -227,7 +227,6 @@ class scenaJuego extends Phaser.Scene {
       this.disparar();
     });
   }
-
   actualizarBarraVida() {
     this.barraVida.clear();
     this.barraVida.fillStyle(0xff0000, 1);
