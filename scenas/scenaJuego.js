@@ -157,7 +157,7 @@ class scenaJuego extends Phaser.Scene {
     const offsetX = 50; // Espaciado horizontal entre botones
     const offsetY = 50; // Espaciado vertical entre botones
     const startX = width - 20; // Posición inicial en X (derecha)
-    const startY = height - 20; // Posición inicial en Y (abajo)
+    const startY = height - 5; // Posición inicial en Y (abajo)
 
     // Botón de arriba
     this.botonArriba = this.add
