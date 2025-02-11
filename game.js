@@ -3,6 +3,7 @@ var config = {
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+    orientation: Phaser.Scale.Orientation.LANDSCAPE,
     width: 1000,
     height: 500,
   },
@@ -18,7 +19,7 @@ var config = {
     antialias: false,
   },
 
-   scene: [scenaPrincipal,scenaIntro,scenaRompecabezas,scenaJuego],
+  scene: [scenaPrincipal, scenaIntro, scenaRompecabezas, scenaJuego],
 };
 
 var game = new Phaser.Game(config);
