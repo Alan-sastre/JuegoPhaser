@@ -154,8 +154,8 @@ class scenaJuego extends Phaser.Scene {
     const botonScale = 1.5; // Ajusta este valor para cambiar el tamaño de los botones
 
     // Posicionamiento de los botones de movimiento (abajo a la derecha)
-    const offsetX = 50; // Espaciado horizontal entre botones
-    const offsetY = 50; // Espaciado vertical entre botones
+    const offsetX = 55; // Espaciado horizontal entre botones
+    const offsetY = 55; // Espaciado vertical entre botones
     const startX = width + 400; // Posición inicial en X (derecha)
     const startY = height + 200; // Posición inicial en Y (abajo)
 
@@ -189,7 +189,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Botón de disparo (abajo a la izquierda)
     this.botonDisparo = this.add
-      .image(100, height + 250, "botonDisparo")
+      .image(100, height + 260, "botonDisparo")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
