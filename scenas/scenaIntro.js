@@ -12,33 +12,33 @@ class scenaIntro extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale.displaySize;
-    const fondo = this.add.image(0, 0, "fondo2");
-    fondo.setOrigin(0, 0);
-    fondo.displayWidth = this.scale.width;
-    fondo.displayHeight = this.scale.height;
 
-    this.add.image(800, 320, "capitan").setScale(0.5);
+    // Crear fondo
+    this.fondo = this.add.image(0, 0, "fondo2").setOrigin(0, 0);
+    this.fondo.displayWidth = width;
+    this.fondo.displayHeight = height;
 
-    const nivel1Image = this.add.image(width - 100, 30, "nivel");
-    nivel1Image.setOrigin(0.5);
-    nivel1Image.setScale(0.2);
+    // Imagen del personaje
+    this.capitan = this.add
+      .image(width / 2, height / 2, "capitan")
+      .setScale(0.5);
 
-    // Detectar cambios en la orientación
+    // Imagen del botón de nivel
+    this.nivel1Image = this.add
+      .image(width - 100, 30, "nivel")
+      .setOrigin(0.5)
+      .setScale(0.2);
+
+    // Detectar cambios de orientación
     this.scale.on("orientationchange", (orientation) => {
-      if (orientation === Phaser.Scale.Orientation.LANDSCAPE) {
-        console.log("Modo horizontal (landscape)");
-        // Puedes modificar la posición de los elementos si es necesario
-        nivel1Image.setPosition(this.scale.width - 100, 30);
-      } else if (orientation === Phaser.Scale.Orientation.PORTRAIT) {
-        console.log("Modo vertical (portrait)");
-        // Ajusta los elementos para el modo vertical si es necesario
-        nivel1Image.setPosition(this.scale.width / 2, 50);
-      }
+      console.log("Cambiando orientación a:", orientation);
+      this.updateSceneLayout();
     });
 
+    // Detectar cambios de tamaño (para mayor precisión en dispositivos móviles)
     this.scale.on("resize", (gameSize) => {
-      const newWidth = gameSize.width;
-      nivel1Image.x = newWidth - 100;
+      console.log("Cambiando tamaño:", gameSize);
+      this.updateSceneLayout();
     });
 
     this.dialogues = [
@@ -50,6 +50,20 @@ class scenaIntro extends Phaser.Scene {
 
     this.currentDialogueIndex = 0;
     this.showNextDialogue();
+  }
+  updateSceneLayout() {
+    const { width, height } = this.scale.displaySize;
+
+    // Ajustar la cámara al nuevo tamaño
+    this.cameras.main.setViewport(0, 0, width, height);
+
+    // Ajustar fondo al nuevo tamaño
+    this.fondo.displayWidth = width;
+    this.fondo.displayHeight = height;
+
+    // Ajustar elementos en la pantalla
+    this.capitan.setPosition(width / 2, height / 2);
+    this.nivel1Image.setPosition(width - 100, 30);
   }
 
   showNextDialogue() {
@@ -100,13 +114,11 @@ class scenaIntro extends Phaser.Scene {
   showQuestionWithBoxes(questionText) {
     const question = questionText.split(":")[1].trim();
 
-
     const questionBox = this.add.graphics();
     questionBox.fillStyle(0x000000, 0.8);
     questionBox.fillRoundedRect(50, 150, 600, 100, 15);
 
     const questionTextDisplay = this.add.text(60, 160, question, {
-
       fontSize: "20px",
       fill: "#ffffff",
       wordWrap: { width: 580 },
@@ -226,7 +238,6 @@ class scenaIntro extends Phaser.Scene {
         );
 
         if (this.correctAnswersSelected === 2) {
-
           this.showCongratulations();
           this.time.delayedCall(2000, () => {
             questionBox.destroy();
