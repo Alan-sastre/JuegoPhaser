@@ -25,7 +25,6 @@ class scenaIntro extends Phaser.Scene {
     capitan.setScale(0.8);
     capitan.setOrigin(0.5, 0.5);
 
-
     const nivel1Image = this.add.image(width - 100, 30, "nivel");
     nivel1Image.setOrigin(0.5);
     nivel1Image.setScale(0.2);
@@ -46,10 +45,6 @@ class scenaIntro extends Phaser.Scene {
     this.showNextDialogue();
   }
 
-
-
-
-
   showNextDialogue() {
     if (this.currentDialogueIndex < this.dialogues.length) {
       const currentText = this.dialogues[this.currentDialogueIndex];
@@ -60,10 +55,10 @@ class scenaIntro extends Phaser.Scene {
         const { dialogBox, dialogText, continueText } = this.showDialog(
           this,
           "",
-          50,
-          200,
-          600,
-          150
+          50, // Posición X del cuadro
+          200, // Posición Y del cuadro
+          600, // Ancho del cuadro
+          150 // Alto del cuadro
         );
 
         let currentCharIndex = 0;
@@ -71,7 +66,7 @@ class scenaIntro extends Phaser.Scene {
         typingSound.play({ loop: true, volume: 0.5 });
 
         const typingAnimation = this.time.addEvent({
-          delay: 50,
+          delay: 50, // Velocidad de escritura
           callback: () => {
             dialogText.text += currentText[currentCharIndex];
             currentCharIndex++;
@@ -80,6 +75,12 @@ class scenaIntro extends Phaser.Scene {
               typingAnimation.remove();
               typingSound.stop();
               continueText.setText("Da click para continuar");
+
+              // Asegurar que el texto esté debajo del cuadro gris
+              continueText.setPosition(
+                dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
+                dialogBox.y + dialogBox.height + 20
+              );
 
               this.input.once("pointerdown", () => {
                 this.currentDialogueIndex++;
@@ -106,7 +107,8 @@ class scenaIntro extends Phaser.Scene {
     const questionTextDisplay = this.add.text(60, 160, question, {
       fontSize: "20px",
       fill: "#ffffff",
-      wordWrap: { width: 580 },
+      wordWrap: { width: 580, useAdvancedWrap: true },
+      lineSpacing: 10,
     });
 
     const options = [
@@ -275,10 +277,10 @@ class scenaIntro extends Phaser.Scene {
     const { dialogBox, dialogText, continueText } = this.showDialog(
       this,
       "",
-      50,
-      200,
-      600,
-      150
+      50, // Posición X del cuadro
+      200, // Posición Y del cuadro
+      600, // Ancho del cuadro
+      150 // Alto del cuadro
     );
 
     let currentCharIndex = 0;
@@ -286,7 +288,7 @@ class scenaIntro extends Phaser.Scene {
     typingSound.play({ loop: true, volume: 0.5 });
 
     const typingAnimation = this.time.addEvent({
-      delay: 50,
+      delay: 50, // Velocidad de escritura
       callback: () => {
         dialogText.text += feedbackText[currentCharIndex];
         currentCharIndex++;
@@ -295,6 +297,12 @@ class scenaIntro extends Phaser.Scene {
           typingAnimation.remove();
           typingSound.stop();
           continueText.setText("Da click para continuar");
+
+          // Asegurar que el texto esté debajo del cuadro gris
+          continueText.setPosition(
+            dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
+            dialogBox.y + dialogBox.height + 20
+          );
 
           this.input.once("pointerdown", () => {
             this.closeDialog(dialogBox, dialogText, continueText);
@@ -312,7 +320,7 @@ class scenaIntro extends Phaser.Scene {
     alertBox.fillRoundedRect(100, 50, 600, 50, 15);
 
     const alertText = this.add.text(110, 60, message, {
-      fontSize: "21px",
+      fontSize: "18px",
       fill: "#ffffff",
       wordWrap: { width: 580 },
     });
@@ -328,20 +336,23 @@ class scenaIntro extends Phaser.Scene {
     dialogBox.fillStyle(0x000000, 0.8);
     dialogBox.fillRoundedRect(x, y, width, height, 15);
 
-    const dialogText = scene.add.text(x + 10, y + 10, text, {
-      fontSize: "25px",
+    const dialogText = scene.add.text(x + 20, y + 20, text, {
+      fontSize: "18px",
       fill: "#ffffff",
       fontStyle: "bold",
-      wordWrap: { width: width - 20 },
+      wordWrap: { width: width - 40, useAdvancedWrap: true },
+      align: "left",
+      lineSpacing: 10,
     });
 
     const continueText = scene.add.text(
-      x + width / 2 - 100,
-      y + height + 10,
+      x + width / 2 - 100, // Posición horizontal centrada
+      y + height + 20, // Posición vertical debajo del cuadro
       "",
       {
-        fontSize: "18px",
-        fill: "#ffffff",
+        fontSize: "22px",
+        fill: "#ffcc00",
+        fontStyle: "bold",
       }
     );
 
