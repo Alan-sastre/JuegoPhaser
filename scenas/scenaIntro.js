@@ -17,7 +17,14 @@ class scenaIntro extends Phaser.Scene {
     fondo.displayWidth = this.scale.width;
     fondo.displayHeight = this.scale.height;
 
-    this.add.image(800, 320, "capitan").setScale(0.5);
+    const capitan = this.add.image(
+      this.scale.width * 0.5,
+      this.scale.height * 0.6,
+      "capitan"
+    );
+    capitan.setScale(0.5);
+    capitan.setOrigin(0.5, 0.5);
+
 
     const nivel1Image = this.add.image(width - 100, 30, "nivel");
     nivel1Image.setOrigin(0.5);
