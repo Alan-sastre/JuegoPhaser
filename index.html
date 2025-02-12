@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui" />
     <title>Juego Robi</title>
     <link rel="icon" href="assets/logorobcodesolutions.ico" type="image/png"> <!-- se tiene que colocar siempre .ico -->
 
@@ -12,18 +13,22 @@
 <body>
 
     <style>
-        html,
         body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            background: black;
+            margin: 0px;
+            padding: 0px;
         }
 
-        canvas {
-            display: block;
+        #turn {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            background-color: white;
+            background-image: url('playportrait.png');
+            background-repeat: no-repeat;
+            background-position: center center;
+            display: none;
         }
     </style>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.86.0/dist/phaser.js"></script>
