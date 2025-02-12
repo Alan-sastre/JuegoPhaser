@@ -1,7 +1,7 @@
 var config = {
   type: Phaser.AUTO,
   scale: {
-    mode: Phaser.Scale.RESIZE,
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     orientation: Phaser.Scale.Orientation.LANDSCAPE,
     width: 1000,
