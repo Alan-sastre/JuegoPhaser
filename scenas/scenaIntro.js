@@ -314,6 +314,7 @@ class scenaIntro extends Phaser.Scene {
     const alertText = this.add.text(110, 60, message, {
       fontSize: "21px",
       fill: "#ffffff",
+      fontStyle: "bold",
       wordWrap: { width: 580 },
     });
 
