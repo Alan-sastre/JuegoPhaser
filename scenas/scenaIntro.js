@@ -312,7 +312,7 @@ class scenaIntro extends Phaser.Scene {
     alertBox.fillRoundedRect(100, 50, 600, 50, 15);
 
     const alertText = this.add.text(110, 60, message, {
-      fontSize: "18px",
+      fontSize: "21px",
       fill: "#ffffff",
       wordWrap: { width: 580 },
     });
