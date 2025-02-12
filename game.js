@@ -5,7 +5,7 @@ function isMobile() {
 var config = {
   type: Phaser.AUTO,
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.NONE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: isMobile() ? 1000 : 1280, // Ancho diferente para móviles y PC
     height: isMobile() ? 500 : 720, // Alto diferente para móviles y PC
