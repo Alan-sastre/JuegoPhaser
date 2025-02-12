@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="screen-orientation" content="landscape">
     <title>Juego Robi</title>
-    <link rel="icon" href="assets/logorobcodesolutions.ico" type="image/png"> <!-- se tiene que colocar siempre .ico -->
-
+    <link rel="icon" href="assets/logorobcodesolutions.ico" type="image/png">
 </head>
 
 <body>
@@ -16,6 +15,7 @@
         body {
             margin: 0px;
             padding: 0px;
+            overflow: hidden;
         }
 
         #turn {
@@ -28,15 +28,18 @@
             background-image: url('roblogo.png');
             background-repeat: no-repeat;
             background-position: center center;
-            display: none;
+            background-size: contain;
+            display: flex;
             justify-content: center;
             align-items: center;
             font-size: 24px;
-            color: black;
+            color: white;
             z-index: 1000;
-
+            text-align: center;
+            padding: 20px;
         }
     </style>
+
     <script src="//cdn.jsdelivr.net/npm/phaser@3.86.0/dist/phaser.js"></script>
 
     <!-- Escenas phaser -->
@@ -46,35 +49,25 @@
     <script src="scenas/scenaJuego.js"></script>
     <script src="game.js"></script>
 
-
     <div id="turn">
         <p>Por favor, gira tu dispositivo a modo horizontal para jugar.</p>
     </div>
 
     <script>
-         function isMobile() {
-                return window.innerWidth <= 768; 
+        function checkOrientation() {
+            let isPortrait = window.matchMedia("(orientation: portrait)").matches;
+            let isMobile = window.innerWidth < 768;
+
+            if (isMobile && isPortrait) {
+                document.getElementById('turn').style.display = 'flex';
+            } else {
+                document.getElementById('turn').style.display = 'none';
             }
+        }
 
-            window.addEventListener("orientationchange", function () {
-                if (isMobile()) {
-                    if (window.orientation === 90 || window.orientation === -90) {
-                        document.getElementById('turn').style.display = 'none';
-                    } else {
-                        document.getElementById('turn').style.display = 'flex';
-                    }
-                }
-            });
-
-            window.onload = function () {
-                if (isMobile()) {
-                    if (window.orientation === 90 || window.orientation === -90) {
-                        document.getElementById('turn').style.display = 'none';
-                    } else {
-                        document.getElementById('turn').style.display = 'flex';
-                    }
-                }
-            };
+        window.addEventListener("resize", checkOrientation);
+        window.addEventListener("orientationchange", checkOrientation);
+        window.addEventListener("DOMContentLoaded", checkOrientation);
     </script>
 
 </body>
