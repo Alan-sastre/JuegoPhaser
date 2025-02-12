@@ -18,11 +18,11 @@ class scenaIntro extends Phaser.Scene {
     fondo.displayHeight = this.scale.height;
 
     const capitan = this.add.image(
-      this.scale.width * 0.5,
-      this.scale.height * 0.6,
+      this.scale.width * 0.8,
+      this.scale.height * 0.7,
       "capitan"
     );
-    capitan.setScale(0.5);
+    capitan.setScale(0.8);
     capitan.setOrigin(0.5, 0.5);
 
 
@@ -32,7 +32,7 @@ class scenaIntro extends Phaser.Scene {
 
     this.scale.on("resize", (gameSize) => {
       const newWidth = gameSize.width;
-      nivel1Image.x = newWidth - 100;
+      nivel1Image.x = newWidth + 100;
     });
 
     this.dialogues = [
