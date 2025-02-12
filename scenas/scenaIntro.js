@@ -74,14 +74,15 @@ class scenaIntro extends Phaser.Scene {
             if (currentCharIndex >= currentText.length) {
               typingAnimation.remove();
               typingSound.stop();
-              continueText.setText("Da click para continuar");
 
-              // Asegurar que el texto esté debajo del cuadro gris
+              // Mostrar el mensaje "Da click para continuar"
+              continueText.setText("Da click para continuar");
               continueText.setPosition(
                 dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
                 dialogBox.y + dialogBox.height + 20
               );
 
+              // Esperar a que el usuario haga clic para continuar
               this.input.once("pointerdown", () => {
                 this.currentDialogueIndex++;
                 this.closeDialog(dialogBox, dialogText, continueText);
@@ -93,7 +94,26 @@ class scenaIntro extends Phaser.Scene {
         });
       }
     } else {
-      this.scene.start("game");
+      // Cuando se acaban los diálogos, mostrar el mensaje final y cambiar de escena
+      const { dialogBox, dialogText, continueText } = this.showDialog(
+        this,
+        "¡Has completado la introducción!",
+        50, // Posición X del cuadro
+        200, // Posición Y del cuadro
+        600, // Ancho del cuadro
+        150 // Alto del cuadro
+      );
+
+      continueText.setText("Da click para continuar");
+      continueText.setPosition(
+        dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
+        dialogBox.y + dialogBox.height + 20
+      );
+
+      this.input.once("pointerdown", () => {
+        this.closeDialog(dialogBox, dialogText, continueText);
+        this.scene.start("game"); // Cambiar a la siguiente escena
+      });
     }
   }
 
@@ -296,9 +316,9 @@ class scenaIntro extends Phaser.Scene {
         if (currentCharIndex >= feedbackText.length) {
           typingAnimation.remove();
           typingSound.stop();
-          continueText.setText("Da click para continuar");
 
-          // Asegurar que el texto esté debajo del cuadro gris
+          // Mostrar el mensaje "Da click para continuar"
+          continueText.setText("Da click para continuar");
           continueText.setPosition(
             dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
             dialogBox.y + dialogBox.height + 20
