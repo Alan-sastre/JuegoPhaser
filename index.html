@@ -39,6 +39,33 @@
     <script src="scenas/scenaRompecabezas.js"></script>
     <script src="scenas/scenaJuego.js"></script>
     <script src="game.js"></script>
+
+
+    <div id="turn">
+        <p>Por favor, gira tu dispositivo a modo horizontal para jugar.</p>
+    </div>
+
+<script>
+    window.addEventListener("orientationchange", function () {
+            if (window.orientation === 90 || window.orientation === -90) {
+                // El dispositivo está en modo horizontal
+                document.getElementById('turn').style.display = 'none';
+            } else {
+                // El dispositivo está en modo vertical
+                document.getElementById('turn').style.display = 'flex';
+            }
+        });
+
+        // Verificar la orientación al cargar la página
+        window.onload = function () {
+            if (window.orientation === 90 || window.orientation === -90) {
+                document.getElementById('turn').style.display = 'none';
+            } else {
+                document.getElementById('turn').style.display = 'flex';
+            }
+        };
+</script>
+
 </body>
 
 </html>
