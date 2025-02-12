@@ -23,7 +23,6 @@ class scenaIntro extends Phaser.Scene {
     nivel1Image.setOrigin(0.5);
     nivel1Image.setScale(0.2);
 
-
     this.scale.on("resize", (gameSize) => {
       const newWidth = gameSize.width;
       nivel1Image.x = newWidth - 100;
@@ -85,16 +84,15 @@ class scenaIntro extends Phaser.Scene {
       this.scene.start("game");
     }
   }
+
   showQuestionWithBoxes(questionText) {
     const question = questionText.split(":")[1].trim();
-
 
     const questionBox = this.add.graphics();
     questionBox.fillStyle(0x000000, 0.8);
     questionBox.fillRoundedRect(50, 150, 600, 100, 15);
 
     const questionTextDisplay = this.add.text(60, 160, question, {
-
       fontSize: "20px",
       fill: "#ffffff",
       wordWrap: { width: 580 },
@@ -214,7 +212,6 @@ class scenaIntro extends Phaser.Scene {
         );
 
         if (this.correctAnswersSelected === 2) {
-
           this.showCongratulations();
           this.time.delayedCall(2000, () => {
             questionBox.destroy();
@@ -306,7 +303,7 @@ class scenaIntro extends Phaser.Scene {
     const alertText = this.add.text(110, 60, message, {
       fontSize: "18px",
       fill: "#ffffff",
-      wordWrap: { width: 580 }, 
+      wordWrap: { width: 580 },
     });
 
     this.time.delayedCall(2000, () => {
