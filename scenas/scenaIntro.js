@@ -39,6 +39,10 @@ class scenaIntro extends Phaser.Scene {
     this.showNextDialogue();
   }
 
+
+
+
+
   showNextDialogue() {
     if (this.currentDialogueIndex < this.dialogues.length) {
       const currentText = this.dialogues[this.currentDialogueIndex];
@@ -142,13 +146,13 @@ class scenaIntro extends Phaser.Scene {
     const columnSpacing = 50;
 
     options.forEach((option, index) => {
-      const column = index % 2 === 0 ? 0 : 1; // 0 para la columna izquierda, 1 para la derecha
-      const row = Math.floor(index / 2); // Fila actual
+      const column = index % 2 === 0 ? 0 : 1;
+      const row = Math.floor(index / 2);
 
       const boxX =
         column === 0
-          ? this.scale.width / 2 - boxWidth - columnSpacing // Columna izquierda
-          : this.scale.width / 2 + columnSpacing; // Columna derecha
+          ? this.scale.width / 2 - boxWidth - columnSpacing
+          : this.scale.width / 2 + columnSpacing;
 
       const boxY = startY + row * (boxHeight + spacing);
 
