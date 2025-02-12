@@ -25,6 +25,7 @@ class scenaIntro extends Phaser.Scene {
     capitan.setScale(0.8);
     capitan.setOrigin(0.5, 0.5);
 
+
     const nivel1Image = this.add.image(width - 100, 30, "nivel");
     nivel1Image.setOrigin(0.5);
     nivel1Image.setScale(0.2);
@@ -45,6 +46,10 @@ class scenaIntro extends Phaser.Scene {
     this.showNextDialogue();
   }
 
+
+
+
+
   showNextDialogue() {
     if (this.currentDialogueIndex < this.dialogues.length) {
       const currentText = this.dialogues[this.currentDialogueIndex];
@@ -55,10 +60,10 @@ class scenaIntro extends Phaser.Scene {
         const { dialogBox, dialogText, continueText } = this.showDialog(
           this,
           "",
-          50, // Posición X del cuadro
-          200, // Posición Y del cuadro
-          600, // Ancho del cuadro
-          150 // Alto del cuadro
+          50,
+          200,
+          600,
+          150
         );
 
         let currentCharIndex = 0;
@@ -66,7 +71,7 @@ class scenaIntro extends Phaser.Scene {
         typingSound.play({ loop: true, volume: 0.5 });
 
         const typingAnimation = this.time.addEvent({
-          delay: 50, // Velocidad de escritura
+          delay: 50,
           callback: () => {
             dialogText.text += currentText[currentCharIndex];
             currentCharIndex++;
@@ -74,15 +79,8 @@ class scenaIntro extends Phaser.Scene {
             if (currentCharIndex >= currentText.length) {
               typingAnimation.remove();
               typingSound.stop();
-
-              // Mostrar el mensaje "Da click para continuar"
               continueText.setText("Da click para continuar");
-              continueText.setPosition(
-                dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
-                dialogBox.y + dialogBox.height + 20
-              );
 
-              // Esperar a que el usuario haga clic para continuar
               this.input.once("pointerdown", () => {
                 this.currentDialogueIndex++;
                 this.closeDialog(dialogBox, dialogText, continueText);
@@ -94,26 +92,7 @@ class scenaIntro extends Phaser.Scene {
         });
       }
     } else {
-      // Cuando se acaban los diálogos, mostrar el mensaje final y cambiar de escena
-      const { dialogBox, dialogText, continueText } = this.showDialog(
-        this,
-        "¡Has completado la introducción!",
-        50, // Posición X del cuadro
-        200, // Posición Y del cuadro
-        600, // Ancho del cuadro
-        150 // Alto del cuadro
-      );
-
-      continueText.setText("Da click para continuar");
-      continueText.setPosition(
-        dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
-        dialogBox.y + dialogBox.height + 20
-      );
-
-      this.input.once("pointerdown", () => {
-        this.closeDialog(dialogBox, dialogText, continueText);
-        this.scene.start("game"); // Cambiar a la siguiente escena
-      });
+      this.scene.start("game");
     }
   }
 
@@ -127,8 +106,7 @@ class scenaIntro extends Phaser.Scene {
     const questionTextDisplay = this.add.text(60, 160, question, {
       fontSize: "20px",
       fill: "#ffffff",
-      wordWrap: { width: 580, useAdvancedWrap: true },
-      lineSpacing: 10,
+      wordWrap: { width: 580 },
     });
 
     const options = [
@@ -297,10 +275,10 @@ class scenaIntro extends Phaser.Scene {
     const { dialogBox, dialogText, continueText } = this.showDialog(
       this,
       "",
-      50, // Posición X del cuadro
-      200, // Posición Y del cuadro
-      600, // Ancho del cuadro
-      150 // Alto del cuadro
+      50,
+      200,
+      600,
+      150
     );
 
     let currentCharIndex = 0;
@@ -308,7 +286,7 @@ class scenaIntro extends Phaser.Scene {
     typingSound.play({ loop: true, volume: 0.5 });
 
     const typingAnimation = this.time.addEvent({
-      delay: 50, // Velocidad de escritura
+      delay: 50,
       callback: () => {
         dialogText.text += feedbackText[currentCharIndex];
         currentCharIndex++;
@@ -316,13 +294,7 @@ class scenaIntro extends Phaser.Scene {
         if (currentCharIndex >= feedbackText.length) {
           typingAnimation.remove();
           typingSound.stop();
-
-          // Mostrar el mensaje "Da click para continuar"
           continueText.setText("Da click para continuar");
-          continueText.setPosition(
-            dialogBox.x + dialogBox.width / 2 - continueText.width / 2,
-            dialogBox.y + dialogBox.height + 20
-          );
 
           this.input.once("pointerdown", () => {
             this.closeDialog(dialogBox, dialogText, continueText);
@@ -356,23 +328,20 @@ class scenaIntro extends Phaser.Scene {
     dialogBox.fillStyle(0x000000, 0.8);
     dialogBox.fillRoundedRect(x, y, width, height, 15);
 
-    const dialogText = scene.add.text(x + 20, y + 20, text, {
-      fontSize: "18px",
+    const dialogText = scene.add.text(x + 10, y + 10, text, {
+      fontSize: "25px",
       fill: "#ffffff",
       fontStyle: "bold",
-      wordWrap: { width: width - 40, useAdvancedWrap: true },
-      align: "left",
-      lineSpacing: 10,
+      wordWrap: { width: width - 20 },
     });
 
     const continueText = scene.add.text(
-      x + width / 2 - 100, // Posición horizontal centrada
-      y + height + 20, // Posición vertical debajo del cuadro
+      x + width / 2 - 100,
+      y + height + 10,
       "",
       {
-        fontSize: "22px",
-        fill: "#ffcc00",
-        fontStyle: "bold",
+        fontSize: "18px",
+        fill: "#ffffff",
       }
     );
 
