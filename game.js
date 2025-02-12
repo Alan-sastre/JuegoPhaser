@@ -3,7 +3,7 @@ var config = {
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    orientation: Phaser.Scale.Orientation.LANDSCAPE,
+    orientation: isMobile() ? Phaser.Scale.Orientation.LANDSCAPE : Phaser.Scale.Orientation.ANY, // Forza horizontal solo en móviles
     width: 1000,
     height: 500,
   },

@@ -24,11 +24,17 @@
             position: fixed;
             top: 0px;
             left: 0px;
-            background-color: white;
-            background-image: url('playportrait.png');
+            background-color: #001532;
+            background-image: url('roblogo.png');
             background-repeat: no-repeat;
             background-position: center center;
             display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: black;
+            z-index: 1000;
+
         }
     </style>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.86.0/dist/phaser.js"></script>
@@ -45,26 +51,31 @@
         <p>Por favor, gira tu dispositivo a modo horizontal para jugar.</p>
     </div>
 
-<script>
-    window.addEventListener("orientationchange", function () {
-            if (window.orientation === 90 || window.orientation === -90) {
-                // El dispositivo está en modo horizontal
-                document.getElementById('turn').style.display = 'none';
-            } else {
-                // El dispositivo está en modo vertical
-                document.getElementById('turn').style.display = 'flex';
+    <script>
+         function isMobile() {
+                return window.innerWidth <= 768; 
             }
-        });
 
-        // Verificar la orientación al cargar la página
-        window.onload = function () {
-            if (window.orientation === 90 || window.orientation === -90) {
-                document.getElementById('turn').style.display = 'none';
-            } else {
-                document.getElementById('turn').style.display = 'flex';
-            }
-        };
-</script>
+            window.addEventListener("orientationchange", function () {
+                if (isMobile()) {
+                    if (window.orientation === 90 || window.orientation === -90) {
+                        document.getElementById('turn').style.display = 'none';
+                    } else {
+                        document.getElementById('turn').style.display = 'flex';
+                    }
+                }
+            });
+
+            window.onload = function () {
+                if (isMobile()) {
+                    if (window.orientation === 90 || window.orientation === -90) {
+                        document.getElementById('turn').style.display = 'none';
+                    } else {
+                        document.getElementById('turn').style.display = 'flex';
+                    }
+                }
+            };
+    </script>
 
 </body>
 
