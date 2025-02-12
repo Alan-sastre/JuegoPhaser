@@ -314,7 +314,6 @@ class scenaIntro extends Phaser.Scene {
     const alertText = this.add.text(110, 60, message, {
       fontSize: "21px",
       fill: "#ffffff",
-      fontStyle: "bold",
       wordWrap: { width: 580 },
     });
 
@@ -330,13 +329,14 @@ class scenaIntro extends Phaser.Scene {
     dialogBox.fillRoundedRect(x, y, width, height, 15);
 
     const dialogText = scene.add.text(x + 10, y + 10, text, {
-      fontSize: "20px",
+      fontSize: "25px",
       fill: "#ffffff",
+      fontStyle: "bold",
       wordWrap: { width: width - 20 },
     });
 
     const continueText = scene.add.text(
-      x + width / 2 - 80,
+      x + width / 2 - 100,
       y + height + 10,
       "",
       {
