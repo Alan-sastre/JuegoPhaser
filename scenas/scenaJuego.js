@@ -54,7 +54,11 @@ class scenaJuego extends Phaser.Scene {
       .setDepth(10);
 
     // Añadir elementos del juego
-    this.background = this.add.image(500, 350, "background").setScale(0.3);
+    let scaleFactor = this.scale.width > 800 ? 0.5 : 0.3; // Aumenta el tamaño en pantallas grandes
+    this.background = this.add
+      .image(this.scale.width / 2, this.scale.height / 1.4, "background")
+      .setScale(scaleFactor);
+
     this.planetas = this.add.image(600, 200, "planetas").setScale(0.2);
     this.planetas2 = this.add.image(350, 500, "planetas").setScale(1);
     this.GranPlaneta = this.add.image(900, 100, "GranPlaneta").setScale(0.3);
