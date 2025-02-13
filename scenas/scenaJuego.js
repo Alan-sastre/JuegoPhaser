@@ -207,8 +207,8 @@ class scenaJuego extends Phaser.Scene {
     const botonScale = Math.min(width, height) * 0.006;
     const botonDisparoScale = botonScale * 1.8;
 
-    const offsetX = width * 0.09;
-    const offsetY = height * 0.09;
+    const offsetX = width * 0.011;
+    const offsetY = height * 0.011;
     const startX = width * 1.4;
     const startY = height * 1.4;
 
