@@ -24,16 +24,6 @@ var config = {
   scene: [scenaJuego], //scenaPrincipal, scenaIntro, scenaRompecabezas,
 };
 
-// Prevenir el zoom por doble toque
-document.addEventListener('touchstart', function(event) {
-    if (event.touches.length > 1) {
-        event.preventDefault();
-    }
-}, { passive: false });
 
-// Prevenir el zoom por gestos
-document.addEventListener('gesturestart', function(event) {
-    event.preventDefault();
-}, { passive: false });
 
 var game = new Phaser.Game(config);

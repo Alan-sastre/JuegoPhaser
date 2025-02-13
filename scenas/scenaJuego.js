@@ -37,17 +37,13 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
+    this.scale.on('resize', this.resize, this);
+
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
 
-    // Configurar el escalado correcto
-    this.scale.on("resize", (gameSize, baseSize, displaySize, resolution) => {
-      this.cameras.main.setViewport(0, 0, gameSize.width, gameSize.height);
-      this.resetGameElements();
-    });
-
-    // Inicializar el juego con un pequeño retraso para asegurar dimensiones correctas
-    this.time.delayedCall(100, () => {
+    // Esperar un frame para asegurarse de que las dimensiones estén correctas
+    this.time.delayedCall(1, () => {
       this.initializeGame();
     });
   }
@@ -205,34 +201,8 @@ class scenaJuego extends Phaser.Scene {
     }
   }
 
-  resetGameElements() {
-    // Limpiar controles existentes si los hay
-    if (this.isMobile) {
-      this.removeExistingControls();
-      this.addMobileControls();
-    }
-
-    // Reajustar el fondo
-    if (this.fondo) {
-      this.fondo.setScale(
-        this.scale.width / this.fondo.width,
-        this.scale.height / this.fondo.height
-      );
-    }
-
-    // Reposicionar otros elementos si es necesario
-    // ... ajustar posición de otros elementos según sea necesario
-  }
-
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
-
-    // Asegurarse de que las dimensiones sean válidas
-    if (width <= 0 || height <= 0) {
-      console.warn("Invalid dimensions, retrying...");
-      this.time.delayedCall(100, () => this.addMobileControls());
-      return;
-    }
 
     const botonScale = Math.min(width, height) * 0.004;
     const botonDisparoScale = botonScale * 1.6;
