@@ -37,9 +37,46 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
+    this.scale.on('resize', this.resize, this);
+
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
+
+    // Esperar un frame para asegurarse de que las dimensiones estén correctas
+    this.time.delayedCall(1, () => {
+      this.initializeGame();
+    });
+  }
+
+  resize() {
+    if (this.isMobile) {
+      // Eliminar controles existentes si los hay
+      this.removeExistingControls();
+      // Recrear los controles con las nuevas dimensiones
+      this.addMobileControls();
+    }
+  }
+
+  removeExistingControls() {
+    // Eliminar botones existentes si existen
+    if (this.botonArriba) this.botonArriba.destroy();
+    if (this.botonAbajo) this.botonAbajo.destroy();
+    if (this.botonIzquierda) this.botonIzquierda.destroy();
+    if (this.botonDerecha) this.botonDerecha.destroy();
+    if (this.botonDisparo) this.botonDisparo.destroy();
+  }
+
+  initializeGame() {
     const { width, height } = this.scale.displaySize;
+
+    // Ajustar el fondo para que ocupe toda la pantalla
+    this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
+    this.fondo.setScale(
+      this.scale.width / this.fondo.width,
+      this.scale.height / this.fondo.height
+    );
+
+    //const { width, height } = this.scale.displaySize;
 
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
@@ -157,14 +194,24 @@ class scenaJuego extends Phaser.Scene {
 
     // Controles táctiles (solo para móviles)
     if (this.isMobile) {
-      this.addMobileControls();
+      // Esperar un pequeño momento para asegurarse de que las dimensiones estén estables
+      this.time.delayedCall(100, () => {
+        this.addMobileControls();
+      });
     }
   }
 
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.min(width, height) * 0.004      ;
+    // Asegurarse de que las dimensiones sean válidas
+    if (width <= 0 || height <= 0) {
+      console.warn("Invalid dimensions, retrying...");
+      this.time.delayedCall(100, () => this.addMobileControls());
+      return;
+    }
+
+    const botonScale = Math.min(width, height) * 0.004;
     const botonDisparoScale = botonScale * 1.6;
 
     const offsetX = width * 0.09;
