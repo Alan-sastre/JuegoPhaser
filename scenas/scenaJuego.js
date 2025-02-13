@@ -207,10 +207,10 @@ class scenaJuego extends Phaser.Scene {
     const botonScale = Math.min(width, height) * 0.006;
     const botonDisparoScale = botonScale * 1.8;
 
-    const offsetX = width * 1.2;
-    const offsetY = height * 1.2;
-    const startX = width * 0.89;
-    const startY = height * 0.89;
+    const offsetX = width * 0.09;
+    const offsetY = height * 0.09;
+    const startX = width * 0.90;
+    const startY = height * 0.90;
 
     // Configurar el input para multitoque
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
