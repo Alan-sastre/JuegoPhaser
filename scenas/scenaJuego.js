@@ -174,6 +174,13 @@ class scenaJuego extends Phaser.Scene {
     const startX = width * 0.85; // 85% del ancho de la pantalla
     const startY = height * 0.85; // 85% de la altura de la pantalla
 
+    this.movementState = {
+      up: false,
+      down: false,
+      left: false,
+      right: false,
+    };
+
     // Botón de arriba
     this.botonArriba = this.add
       .image(startX + offsetX, startY - offsetY, "botonArriba")
@@ -209,22 +216,98 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonDisparoScale)
       .setDepth(10);
 
-    // Eventos de los botones de movimiento
-    this.botonArriba.on("pointerdown", () => this.nave.setVelocityY(-200));
-    this.botonArriba.on("pointerup", () => this.nave.setVelocityY(0));
+    this.botonArriba.on("pointerdown", () => {
+      this.movementState.up = true;
+      this.updateMovement();
+    });
+    this.botonArriba.on("pointerup", () => {
+      this.movementState.up = false;
+      this.updateMovement();
+    });
+    this.botonArriba.on("pointerout", () => {
+      this.movementState.up = false;
+      this.updateMovement();
+    });
 
-    this.botonAbajo.on("pointerdown", () => this.nave.setVelocityY(200));
-    this.botonAbajo.on("pointerup", () => this.nave.setVelocityY(0));
+    this.botonAbajo.on("pointerdown", () => {
+      this.movementState.down = true;
+      this.updateMovement();
+    });
+    this.botonAbajo.on("pointerup", () => {
+      this.movementState.down = false;
+      this.updateMovement();
+    });
+    this.botonAbajo.on("pointerout", () => {
+      this.movementState.down = false;
+      this.updateMovement();
+    });
 
-    this.botonIzquierda.on("pointerdown", () => this.nave.setVelocityX(-200));
-    this.botonIzquierda.on("pointerup", () => this.nave.setVelocityX(0));
+    this.botonIzquierda.on("pointerdown", () => {
+      this.movementState.left = true;
+      this.updateMovement();
+    });
+    this.botonIzquierda.on("pointerup", () => {
+      this.movementState.left = false;
+      this.updateMovement();
+    });
+    this.botonIzquierda.on("pointerout", () => {
+      this.movementState.left = false;
+      this.updateMovement();
+    });
 
-    this.botonDerecha.on("pointerdown", () => this.nave.setVelocityX(200));
-    this.botonDerecha.on("pointerup", () => this.nave.setVelocityX(0));
+    this.botonDerecha.on("pointerdown", () => {
+      this.movementState.right = true;
+      this.updateMovement();
+    });
+    this.botonDerecha.on("pointerup", () => {
+      this.movementState.right = false;
+      this.updateMovement();
+    });
+    this.botonDerecha.on("pointerout", () => {
+      this.movementState.right = false;
+      this.updateMovement();
+    });
 
-    // Evento del botón de disparo
-    this.botonDisparo.on("pointerdown", () => this.disparar());
+    // Evento de disparo independiente
+    this.botonDisparo.on("pointerdown", () => {
+      if (!this.disparoInterval) {
+        this.disparoInterval = this.time.addEvent({
+          delay: this.tiempoEsperaDisparo,
+          callback: () => this.disparar(),
+          loop: true,
+        });
+        // Disparo inicial inmediato
+        this.disparar();
+      }
+    });
+
+    this.botonDisparo.on("pointerup", () => {
+      if (this.disparoInterval) {
+        this.disparoInterval.remove();
+        this.disparoInterval = null;
+      }
+    });
+
+    this.botonDisparo.on("pointerout", () => {
+      if (this.disparoInterval) {
+        this.disparoInterval.remove();
+        this.disparoInterval = null;
+      }
+    });
   }
+  updateMovement() {
+    let velocityX = 0;
+    let velocityY = 0;
+    const speed = 200;
+
+    if (this.movementState.up) velocityY -= speed;
+    if (this.movementState.down) velocityY += speed;
+    if (this.movementState.left) velocityX -= speed;
+    if (this.movementState.right) velocityX += speed;
+
+    this.nave.setVelocity(velocityX, velocityY);
+  }
+
 
   actualizarBarraVida() {
     this.barraVida.clear();
@@ -294,7 +377,6 @@ class scenaJuego extends Phaser.Scene {
       yoyo: true, // Hace que vuelva a aparecer
       repeat: -1, // Se repite infinitamente
     });
-
 
     // Evento del botón de reinicio
     reiniciarBtn.on("pointerdown", () => {
