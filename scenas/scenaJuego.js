@@ -54,7 +54,7 @@ class scenaJuego extends Phaser.Scene {
       .setDepth(10);
 
     // Añadir elementos del juego
-    let scaleFactor = this.scale.width > 800 ? 0.5 : 0.3; // Aumenta el tamaño en pantallas grandes
+    let scaleFactor = this.scale.width > 800 ? 0.5 : 0.3;
     this.background = this.add
       .image(this.scale.width / 2, this.scale.height / 1.4, "background")
       .setScale(scaleFactor);
@@ -141,28 +141,38 @@ class scenaJuego extends Phaser.Scene {
     this.barraVida = this.add.graphics();
     this.actualizarBarraVida();
 
+    // Controles de PC (ratón y teclado)
+    if (!this.isMobile) {
+      // Movimiento de la nave con el ratón
+      this.input.on("pointermove", (pointer) => {
+        this.nave.x = pointer.x;
+        this.nave.y = pointer.y;
+      });
+
+      // Disparar con clic del ratón
+      this.input.on("pointerdown", () => {
+        this.disparar();
+      });
+    }
+
     // Controles táctiles (solo para móviles)
     if (this.isMobile) {
       this.addMobileControls();
-    } else {
-      // Controles de ratón (para PC)
-      this.input.on("pointermove", this.moverNave, this);
-      this.input.on("pointerdown", this.disparar, this);
     }
   }
 
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    // Tamaño de los botones (más grandes)
+    // Tamaño de los botones (ajustado para móviles)
     const botonScale = 1.5;
-    const botonDisparoScale = 4; // Tamaño más grande para el botón de disparo
+    const botonDisparoScale = 2.5;
 
     // Posicionamiento de los botones de movimiento (abajo a la derecha)
     const offsetX = 60;
     const offsetY = 60;
-    const startX = width + 400; // Ajustado para que esté en la esquina inferior derecha
-    const startY = height + 200;
+    const startX = width - 200; // Ajustado para que esté en la esquina inferior derecha
+    const startY = height - 100;
 
     // Botón de arriba
     this.botonArriba = this.add
@@ -192,9 +202,9 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo
+    // Botón de disparo (posicionado en la esquina inferior izquierda)
     this.botonDisparo = this.add
-      .image(200, height + 220, "botonDisparo")
+      .image(100, height - 100, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
@@ -256,11 +266,6 @@ class scenaJuego extends Phaser.Scene {
       this.actualizarBarraVida();
       this.scene.restart();
     });
-  }
-
-  moverNave(pointer) {
-    this.nave.x = pointer.x;
-    this.nave.y = pointer.y;
   }
 
   generarEnemigo() {

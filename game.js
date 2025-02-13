@@ -21,7 +21,7 @@ var config = {
     pixelArt: true,
     antialias: false,
   },
-  scene: [scenaPrincipal, scenaIntro, scenaRompecabezas, scenaJuego],
+  scene: [scenaJuego], //scenaPrincipal, scenaIntro, scenaRompecabezas,
 };
 
 var game = new Phaser.Game(config);
