@@ -164,11 +164,11 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.min(width, height) * 0.003      ;
+    const botonScale = Math.min(width, height) * 0.001      ;
     const botonDisparoScale = botonScale * 1.7;
 
-    const offsetX = width * 0.06;
-    const offsetY = height * 0.06;
+    const offsetX = width * 0.08;
+    const offsetY = height * 0.08;
     const startX = width * 0.85;
     const startY = height * 0.85;
 
