@@ -209,7 +209,7 @@ class scenaJuego extends Phaser.Scene {
 
     const offsetX = width * 0.09;
     const offsetY = height * 0.09;
-    const startX = width * 0.75;
+    const startX = width * 0.95;
     const startY = height * 0.75;
 
     // Configurar el input para multitoque
