@@ -169,8 +169,8 @@ class scenaJuego extends Phaser.Scene {
     const botonDisparoScale = botonScale * 1.5;
 
     // Posicionamiento de los botones de movimiento (en la esquina inferior derecha)
-    const offsetX = width * 0.08; // Aumentado de 0.05 a 0.08
-    const offsetY = height * 0.08; // Aumentado de 0.05 a 0.08
+    const offsetX = width * 1; // Aumentado de 0.05 a 0.08
+    const offsetY = height * 1; // Aumentado de 0.05 a 0.08
     const startX = width * 0.85; // 85% del ancho de la pantalla
     const startY = height * 0.85; // 85% de la altura de la pantalla
 
