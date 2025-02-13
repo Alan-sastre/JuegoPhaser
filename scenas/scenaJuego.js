@@ -37,13 +37,17 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
-    this.scale.on('resize', this.resize, this);
-
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
 
-    // Esperar un frame para asegurarse de que las dimensiones estén correctas
-    this.time.delayedCall(1, () => {
+    // Configurar el escalado correcto
+    this.scale.on("resize", (gameSize, baseSize, displaySize, resolution) => {
+      this.cameras.main.setViewport(0, 0, gameSize.width, gameSize.height);
+      this.resetGameElements();
+    });
+
+    // Inicializar el juego con un pequeño retraso para asegurar dimensiones correctas
+    this.time.delayedCall(100, () => {
       this.initializeGame();
     });
   }
@@ -199,6 +203,25 @@ class scenaJuego extends Phaser.Scene {
         this.addMobileControls();
       });
     }
+  }
+
+  resetGameElements() {
+    // Limpiar controles existentes si los hay
+    if (this.isMobile) {
+      this.removeExistingControls();
+      this.addMobileControls();
+    }
+
+    // Reajustar el fondo
+    if (this.fondo) {
+      this.fondo.setScale(
+        this.scale.width / this.fondo.width,
+        this.scale.height / this.fondo.height
+      );
+    }
+
+    // Reposicionar otros elementos si es necesario
+    // ... ajustar posición de otros elementos según sea necesario
   }
 
   addMobileControls() {
