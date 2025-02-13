@@ -248,21 +248,53 @@ class scenaJuego extends Phaser.Scene {
     // Mostrar texto de Game Over
     const gameOverText = this.add
       .text(this.scale.width / 2, this.scale.height / 2, "Game Over", {
-        fontSize: "48px",
+        fontSize: "36px",
+        fontStyle: "bold",
         fill: "#fff",
+        backgroundColor: "transparent",
+        padding: { x: 20, y: 10 },
+        shadow: {
+          offsetX: 4,
+          offsetY: 4,
+          color: "#000",
+          blur: 4,
+          fill: true,
+        },
+        stroke: "#000",
+        strokeThickness: 4,
       })
       .setOrigin(0.5);
 
-    // Botón de reinicio
+    // Botón de reinicio con animación de parpadeo
     const reiniciarBtn = this.add
       .text(this.scale.width / 2, this.scale.height / 2 + 60, "Reiniciar", {
-        fontSize: "32px",
+        fontSize: "36px",
+        fontStyle: "bold",
         fill: "#fff",
-        backgroundColor: "#000",
+        backgroundColor: "transparent",
         padding: { x: 20, y: 10 },
+        shadow: {
+          offsetX: 4,
+          offsetY: 4,
+          color: "#000",
+          blur: 4,
+          fill: true,
+        },
+        stroke: "#000",
+        strokeThickness: 4,
       })
       .setOrigin(0.5)
       .setInteractive();
+
+    // Animación de parpadeo SOLO para "Reiniciar"
+    this.tweens.add({
+      targets: reiniciarBtn,
+      alpha: 0, // Hace que desaparezca
+      duration: 500, // Tiempo en milisegundos
+      yoyo: true, // Hace que vuelva a aparecer
+      repeat: -1, // Se repite infinitamente
+    });
+
 
     // Evento del botón de reinicio
     reiniciarBtn.on("pointerdown", () => {
