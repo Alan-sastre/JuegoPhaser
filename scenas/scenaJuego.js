@@ -165,12 +165,12 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale.displaySize;
 
     // Tamaño de los botones (ajustado para móviles)
-    const botonScale = Math.min(width, height) * 0.0009; // Escalado relativo
+    const botonScale = Math.min(width, height) * 0.003; // Escalado relativo
     const botonDisparoScale = botonScale * 1.5;
 
     // Posicionamiento de los botones de movimiento (en la esquina inferior derecha)
-    const offsetX = width * 0.05; // 5% del ancho de la pantalla
-    const offsetY = height * 0.05; // 5% de la altura de la pantalla
+    const offsetX = width * 0.08; // Aumentado de 0.05 a 0.08
+    const offsetY = height * 0.08; // Aumentado de 0.05 a 0.08
     const startX = width * 0.85; // 85% del ancho de la pantalla
     const startY = height * 0.85; // 85% de la altura de la pantalla
 
