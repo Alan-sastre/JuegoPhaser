@@ -339,10 +339,21 @@ class scenaIntro extends Phaser.Scene {
       y + height + 10,
       "",
       {
-        fontSize: "18px",
+        fontSize: "30px",
         fill: "#ffffff",
+
       }
     );
+
+    continueText.setShadow(6, 6, "black", 2, true, true);
+
+    scene.tweens.add({
+  targets: continueText,
+  alpha: 0,         // Desvanece el texto
+  duration: 500,    // Duración en milisegundos (0.5 segundos)
+  yoyo: true,       // Hace que el efecto se invierta (volver a aparecer)
+  repeat: -1        // Repetir infinitamente
+});
 
     return { dialogBox, dialogText, continueText };
   }

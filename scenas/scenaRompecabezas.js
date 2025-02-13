@@ -205,6 +205,7 @@ class scenaRompecabezas extends Phaser.Scene {
 
     this.time.delayedCall(5000, () => {
       this.scene.start("scenaJuego");
+      this.sound.stopAll();
     });
   }
 }
