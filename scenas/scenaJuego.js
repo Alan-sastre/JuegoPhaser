@@ -164,150 +164,147 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    // Tamaño de los botones (ajustado para móviles)
-    const botonScale = Math.min(width, height) * 0.003; // Escalado relativo
-    const botonDisparoScale = botonScale * 1.7;
+    const botonScale = Math.min(width, height) * 0.003;
+    const botonDisparoScale = botonScale * 1.5;
 
-    // Posicionamiento de los botones de movimiento (en la esquina inferior derecha)
-    const offsetX = width * 0.08; // Aumentado de 0.05 a 0.08
-    const offsetY = height * 0.08; // Aumentado de 0.05 a 0.08
-    const startX = width * 0.85; // 85% del ancho de la pantalla
-    const startY = height * 0.85; // 85% de la altura de la pantalla
+    const offsetX = width * 0.08;
+    const offsetY = height * 0.08;
+    const startX = width * 0.85;
+    const startY = height * 0.85;
 
-    this.movementState = {
-      up: false,
-      down: false,
-      left: false,
-      right: false,
-    };
+    // Configurar el input para multitoque
+    this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
 
-    // Botón de arriba
+    // Botones de movimiento
     this.botonArriba = this.add
       .image(startX + offsetX, startY - offsetY, "botonArriba")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de abajo
     this.botonAbajo = this.add
       .image(startX + offsetX, startY + offsetY, "botonAbajo")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de izquierda
     this.botonIzquierda = this.add
       .image(startX, startY, "botonIzquierda")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de derecha
     this.botonDerecha = this.add
-      .image(startX + 2 * offsetX, startY, "botonDerecha")
+      .image(startX + offsetX * 2, startY, "botonDerecha")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo (posicionado en la esquina inferior izquierda)
+    // Botón de disparo
     this.botonDisparo = this.add
       .image(width * 0.15, height * 0.85, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
 
+    // Movimiento vertical
     this.botonArriba.on("pointerdown", () => {
-      this.movementState.up = true;
-      this.updateMovement();
+      this.nave.setVelocityY(-200);
     });
-    this.botonArriba.on("pointerup", () => {
-      this.movementState.up = false;
-      this.updateMovement();
-    });
+
     this.botonArriba.on("pointerout", () => {
-      this.movementState.up = false;
-      this.updateMovement();
-    });
-
-    this.botonAbajo.on("pointerdown", () => {
-      this.movementState.down = true;
-      this.updateMovement();
-    });
-    this.botonAbajo.on("pointerup", () => {
-      this.movementState.down = false;
-      this.updateMovement();
-    });
-    this.botonAbajo.on("pointerout", () => {
-      this.movementState.down = false;
-      this.updateMovement();
-    });
-
-    this.botonIzquierda.on("pointerdown", () => {
-      this.movementState.left = true;
-      this.updateMovement();
-    });
-    this.botonIzquierda.on("pointerup", () => {
-      this.movementState.left = false;
-      this.updateMovement();
-    });
-    this.botonIzquierda.on("pointerout", () => {
-      this.movementState.left = false;
-      this.updateMovement();
-    });
-
-    this.botonDerecha.on("pointerdown", () => {
-      this.movementState.right = true;
-      this.updateMovement();
-    });
-    this.botonDerecha.on("pointerup", () => {
-      this.movementState.right = false;
-      this.updateMovement();
-    });
-    this.botonDerecha.on("pointerout", () => {
-      this.movementState.right = false;
-      this.updateMovement();
-    });
-
-    // Evento de disparo independiente
-    this.botonDisparo.on("pointerdown", () => {
-      if (!this.disparoInterval) {
-        this.disparoInterval = this.time.addEvent({
-          delay: this.tiempoEsperaDisparo,
-          callback: () => this.disparar(),
-          loop: true,
-        });
-        // Disparo inicial inmediato
-        this.disparar();
+      if (this.nave.body.velocity.y < 0) {
+        this.nave.setVelocityY(0);
       }
     });
 
+    this.botonArriba.on("pointerup", () => {
+      if (this.nave.body.velocity.y < 0) {
+        this.nave.setVelocityY(0);
+      }
+    });
+
+    this.botonAbajo.on("pointerdown", () => {
+      this.nave.setVelocityY(200);
+    });
+
+    this.botonAbajo.on("pointerout", () => {
+      if (this.nave.body.velocity.y > 0) {
+        this.nave.setVelocityY(0);
+      }
+    });
+
+    this.botonAbajo.on("pointerup", () => {
+      if (this.nave.body.velocity.y > 0) {
+        this.nave.setVelocityY(0);
+      }
+    });
+
+    // Movimiento horizontal
+    this.botonIzquierda.on("pointerdown", () => {
+      this.nave.setVelocityX(-200);
+    });
+
+    this.botonIzquierda.on("pointerout", () => {
+      if (this.nave.body.velocity.x < 0) {
+        this.nave.setVelocityX(0);
+      }
+    });
+
+    this.botonIzquierda.on("pointerup", () => {
+      if (this.nave.body.velocity.x < 0) {
+        this.nave.setVelocityX(0);
+      }
+    });
+
+    this.botonDerecha.on("pointerdown", () => {
+      this.nave.setVelocityX(200);
+    });
+
+    this.botonDerecha.on("pointerout", () => {
+      if (this.nave.body.velocity.x > 0) {
+        this.nave.setVelocityX(0);
+      }
+    });
+
+    this.botonDerecha.on("pointerup", () => {
+      if (this.nave.body.velocity.x > 0) {
+        this.nave.setVelocityX(0);
+      }
+    });
+
+    // Control de disparo
+    let disparoActivo = false;
+
+    this.botonDisparo.on("pointerdown", () => {
+      disparoActivo = true;
+      this.disparoInterval = this.time.addEvent({
+        delay: this.tiempoEsperaDisparo,
+        callback: () => {
+          if (disparoActivo) {
+            this.disparar();
+          }
+        },
+        loop: true,
+      });
+      // Disparo inicial
+      this.disparar();
+    });
+
     this.botonDisparo.on("pointerup", () => {
+      disparoActivo = false;
       if (this.disparoInterval) {
         this.disparoInterval.remove();
-        this.disparoInterval = null;
       }
     });
 
     this.botonDisparo.on("pointerout", () => {
+      disparoActivo = false;
       if (this.disparoInterval) {
         this.disparoInterval.remove();
-        this.disparoInterval = null;
       }
     });
   }
-  updateMovement() {
-    let velocityX = 0;
-    let velocityY = 0;
-    const speed = 200;
-
-    if (this.movementState.up) velocityY -= speed;
-    if (this.movementState.down) velocityY += speed;
-    if (this.movementState.left) velocityX -= speed;
-    if (this.movementState.right) velocityX += speed;
-
-    this.nave.setVelocity(velocityX, velocityY);
-  }
-
 
   actualizarBarraVida() {
     this.barraVida.clear();
