@@ -235,19 +235,83 @@ class scenaJuego extends Phaser.Scene {
   gameOver() {
     this.musicaJuego.stop();
     this.sonidoGameOver.play();
-    this.add
-      .text(this.scale.width / 2 - 100, this.scale.height / 2, "Game Over", {
+
+    // Detener el movimiento de la nave y enemigos
+    this.nave.setVelocity(0, 0);
+    this.enemigos.children.each((enemigo) => {
+      enemigo.setVelocity(0, 0);
+    });
+
+    // Detener la generación de enemigos
+    this.eventos?.forEach((evento) => evento.remove());
+
+    // Mostrar texto de Game Over
+    const gameOverText = this.add
+      .text(this.scale.width / 2, this.scale.height / 2, "Game Over", {
         fontSize: "48px",
         fill: "#fff",
       })
       .setOrigin(0.5);
 
-    // Reiniciar el juego después de 3 segundos
-    this.time.delayedCall(3000, () => {
-      this.vida = 100;
-      this.actualizarBarraVida();
-      this.scene.restart();
+    // Botón de reinicio
+    const reiniciarBtn = this.add
+      .text(this.scale.width / 2, this.scale.height / 2 + 60, "Reiniciar", {
+        fontSize: "32px",
+        fill: "#fff",
+        backgroundColor: "#000",
+        padding: { x: 20, y: 10 },
+      })
+      .setOrigin(0.5)
+      .setInteractive();
+
+    // Evento del botón de reinicio
+    reiniciarBtn.on("pointerdown", () => {
+      this.reiniciarJuego();
     });
+  }
+
+  reiniciarJuego() {
+    // Reiniciar variables del juego
+    this.score = 0;
+    this.vida = 100;
+    this.scoreText.setText(`Score: ${this.score}`);
+    this.actualizarBarraVida();
+
+    // Limpiar enemigos existentes
+    this.enemigos.clear(true, true);
+
+    // Reposicionar la nave
+    this.nave.x = 200;
+    this.nave.y = 300;
+    this.nave.setAlpha(1);
+
+    // Limpiar balas existentes
+    this.balas.clear(true, true);
+
+    // Reiniciar la música
+    this.musicaJuego.play();
+
+    // Eliminar textos de Game Over
+    this.children.list
+      .filter((child) => child instanceof Phaser.GameObjects.Text)
+      .forEach((text) => {
+        if (text !== this.scoreText) {
+          text.destroy();
+        }
+      });
+
+    // Reactivar la generación de enemigos
+    this.eventos = [
+      this.time.addEvent({
+        delay: 2000,
+        callback: this.generarEnemigo,
+        callbackScope: this,
+        loop: true,
+      }),
+    ];
+
+    // Reactivar la capacidad de disparar
+    this.puedeDisparar = true;
   }
 
   generarEnemigo() {
