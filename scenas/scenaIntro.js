@@ -329,14 +329,13 @@ class scenaIntro extends Phaser.Scene {
     dialogBox.fillRoundedRect(x, y, width, height, 15);
 
     const dialogText = scene.add.text(x + 10, y + 10, text, {
-      fontSize: "25px",
+      fontSize: "20px",
       fill: "#ffffff",
-      fontStyle: "bold",
       wordWrap: { width: width - 20 },
     });
 
     const continueText = scene.add.text(
-      x + width / 2 - 100,
+      x + width / 2 - 80,
       y + height + 10,
       "",
       {
