@@ -171,8 +171,8 @@ class scenaJuego extends Phaser.Scene {
     // Posicionamiento de los botones de movimiento (en la esquina inferior derecha)
     const offsetX = width * 1; // Aumentado de 0.05 a 0.08
     const offsetY = height * 1; // Aumentado de 0.05 a 0.08
-    const startX = width * 0.85; // 85% del ancho de la pantalla
-    const startY = height * 0.85; // 85% de la altura de la pantalla
+    const startX = width * 1; // 85% del ancho de la pantalla
+    const startY = height * 1; // 85% de la altura de la pantalla
 
     // Botón de arriba
     this.botonArriba = this.add
