@@ -165,14 +165,14 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale.displaySize;
 
     // Tamaño de los botones (ajustado para móviles)
-    const botonScale = 1.5;
-    const botonDisparoScale = 2.5;
+    const botonScale = Math.min(width, height) * 0.0009; // Escalado relativo
+    const botonDisparoScale = botonScale * 1.5;
 
-    // Posicionamiento de los botones de movimiento (abajo a la derecha)
-    const offsetX = 60;
-    const offsetY = 60;
-    const startX = width - 200; // Ajustado para que esté en la esquina inferior derecha
-    const startY = height - 100;
+    // Posicionamiento de los botones de movimiento (en la esquina inferior derecha)
+    const offsetX = width * 0.05; // 5% del ancho de la pantalla
+    const offsetY = height * 0.05; // 5% de la altura de la pantalla
+    const startX = width * 0.85; // 85% del ancho de la pantalla
+    const startY = height * 0.85; // 85% de la altura de la pantalla
 
     // Botón de arriba
     this.botonArriba = this.add
@@ -204,44 +204,26 @@ class scenaJuego extends Phaser.Scene {
 
     // Botón de disparo (posicionado en la esquina inferior izquierda)
     this.botonDisparo = this.add
-      .image(100, height - 100, "botonDisparo")
+      .image(width * 0.15, height * 0.85, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
 
     // Eventos de los botones de movimiento
-    this.botonArriba.on("pointerdown", () => {
-      this.nave.setVelocityY(-200);
-    });
-    this.botonArriba.on("pointerup", () => {
-      this.nave.setVelocityY(0);
-    });
+    this.botonArriba.on("pointerdown", () => this.nave.setVelocityY(-200));
+    this.botonArriba.on("pointerup", () => this.nave.setVelocityY(0));
 
-    this.botonAbajo.on("pointerdown", () => {
-      this.nave.setVelocityY(200);
-    });
-    this.botonAbajo.on("pointerup", () => {
-      this.nave.setVelocityY(0);
-    });
+    this.botonAbajo.on("pointerdown", () => this.nave.setVelocityY(200));
+    this.botonAbajo.on("pointerup", () => this.nave.setVelocityY(0));
 
-    this.botonIzquierda.on("pointerdown", () => {
-      this.nave.setVelocityX(-200);
-    });
-    this.botonIzquierda.on("pointerup", () => {
-      this.nave.setVelocityX(0);
-    });
+    this.botonIzquierda.on("pointerdown", () => this.nave.setVelocityX(-200));
+    this.botonIzquierda.on("pointerup", () => this.nave.setVelocityX(0));
 
-    this.botonDerecha.on("pointerdown", () => {
-      this.nave.setVelocityX(200);
-    });
-    this.botonDerecha.on("pointerup", () => {
-      this.nave.setVelocityX(0);
-    });
+    this.botonDerecha.on("pointerdown", () => this.nave.setVelocityX(200));
+    this.botonDerecha.on("pointerup", () => this.nave.setVelocityX(0));
 
     // Evento del botón de disparo
-    this.botonDisparo.on("pointerdown", () => {
-      this.disparar();
-    });
+    this.botonDisparo.on("pointerdown", () => this.disparar());
   }
 
   actualizarBarraVida() {
