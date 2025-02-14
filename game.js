@@ -21,7 +21,7 @@ var config = {
     pixelArt: true,
     antialias: false,
   },
-  scene: [scenaJuego], //scenaPrincipal, scenaIntro, scenaRompecabezas,
+  scene: [scenaPrincipal, scenaIntro, scenaRompecabezas,scenaJuego],
 };
 
 
