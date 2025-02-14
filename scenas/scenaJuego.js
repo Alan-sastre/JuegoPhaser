@@ -212,7 +212,7 @@ class scenaJuego extends Phaser.Scene {
     const startX = width * 1.4;
     const startY = height * 1.5;
 
-    // Configurar el input para multitoque
+
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
 
     // Botones de movimiento

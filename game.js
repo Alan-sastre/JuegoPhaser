@@ -7,8 +7,8 @@ var config = {
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: isMobile() ? 1000 : 1280, // Ancho diferente para móviles y PC
-    height: isMobile() ? 500 : 720, // Alto diferente para móviles y PC
+    width: 1000,
+    height:500,
   },
   physics: {
     default: "arcade",
