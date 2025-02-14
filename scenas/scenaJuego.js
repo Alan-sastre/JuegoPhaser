@@ -204,13 +204,13 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.min(width, height) * 0.006;
+    const botonScale = Math.min(width, height) * 0.06; // Adjusted scale factor
     const botonDisparoScale = botonScale * 1.8;
 
     const offsetX = width * 0.12;
     const offsetY = height * 0.12;
-    const startX = width * 1.4;
-    const startY = height * 1.5;
+    const startX = width * 0.1; // Adjusted start position
+    const startY = height * 0.8; // Adjusted start position
 
     // Configurar el input para multitoque
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
@@ -247,6 +247,11 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonDisparoScale)
       .setDepth(10);
 
+    // Add event listeners for button interactions
+    this.addButtonListeners();
+  }
+
+  addButtonListeners() {
     // Movimiento vertical
     this.botonArriba.on("pointerdown", () => {
       this.nave.setVelocityY(-200);
