@@ -207,8 +207,8 @@ class scenaJuego extends Phaser.Scene {
     const botonScale = Math.min(width, height) * 0.008;
     const botonDisparoScale = botonScale * 1.8;
 
-    const offsetX = width * 0.16;
-    const offsetY = height * 0.16;
+    const offsetX = width * 0.17;
+    const offsetY = height * 0.17;
     const startX = width * 1.9;
     const startY = height * 1.5;
 
@@ -241,7 +241,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Botón de disparo
     this.botonDisparo = this.add
-      .image(width * 0.15, height * 1.4, "botonDisparo")
+      .image(width * 0.17, height * 1.5, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
