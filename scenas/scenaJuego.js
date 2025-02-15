@@ -356,14 +356,21 @@ class scenaJuego extends Phaser.Scene {
     this.musicaJuego.stop();
     this.sonidoGameOver.play();
 
+    // Pausar la física del juego
+    this.physics.pause();
+
     // Detener el movimiento de la nave y enemigos
     this.nave.setVelocity(0, 0);
     this.enemigos.children.each((enemigo) => {
       enemigo.setVelocity(0, 0);
+      enemigo.anims.pause(); // Pausar la animación de cada enemigo
     });
 
     // Detener la generación de enemigos
     this.eventos?.forEach((evento) => evento.remove());
+
+    // Detener el movimiento del fondo
+    this.scene.pause(); // Esto detendrá el método update
 
     // Mostrar texto de Game Over
     const gameOverText = this.add
@@ -409,10 +416,10 @@ class scenaJuego extends Phaser.Scene {
     // Animación de parpadeo SOLO para "Reiniciar"
     this.tweens.add({
       targets: reiniciarBtn,
-      alpha: 0, // Hace que desaparezca
-      duration: 500, // Tiempo en milisegundos
-      yoyo: true, // Hace que vuelva a aparecer
-      repeat: -1, // Se repite infinitamente
+      alpha: 0,
+      duration: 500,
+      yoyo: true,
+      repeat: -1,
     });
 
     // Evento del botón de reinicio
@@ -422,6 +429,12 @@ class scenaJuego extends Phaser.Scene {
   }
 
   reiniciarJuego() {
+    // Reanudar la física del juego
+    this.physics.resume();
+
+    // Reanudar la escena
+    this.scene.resume();
+
     // Reiniciar variables del juego
     this.score = 0;
     this.vida = 100;
