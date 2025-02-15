@@ -37,7 +37,7 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
-    this.scale.on("resize", this.resize, this);
+    this.scale.on('resize', this.resize, this);
 
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
@@ -212,6 +212,7 @@ class scenaJuego extends Phaser.Scene {
     const startX = width * 1.4;
     const startY = height * 1.5;
 
+
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
 
     // Botones de movimiento
@@ -364,10 +365,6 @@ class scenaJuego extends Phaser.Scene {
     // Detener la generación de enemigos
     this.eventos?.forEach((evento) => evento.remove());
 
-    // Congelar la pantalla y desactivar las físicas
-    this.scene.pause();
-    this.physics.pause();
-
     // Mostrar texto de Game Over
     const gameOverText = this.add
       .text(this.scale.width / 2, this.scale.height / 2, "Game Over", {
@@ -407,10 +404,7 @@ class scenaJuego extends Phaser.Scene {
         strokeThickness: 4,
       })
       .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true }); // Habilita el cursor de mano
-
-    // Habilitar el botón de reiniciar incluso cuando la escena está pausada
-    reiniciarBtn.setActive(true);
+      .setInteractive();
 
     // Animación de parpadeo SOLO para "Reiniciar"
     this.tweens.add({
@@ -423,11 +417,6 @@ class scenaJuego extends Phaser.Scene {
 
     // Evento del botón de reinicio
     reiniciarBtn.on("pointerdown", () => {
-      // Reanudar la escena y las físicas antes de reiniciar
-      this.scene.resume();
-      this.physics.resume();
-
-      // Reiniciar el juego
       this.reiniciarJuego();
     });
   }
