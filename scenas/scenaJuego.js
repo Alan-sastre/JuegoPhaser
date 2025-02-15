@@ -37,7 +37,7 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
-    this.scale.on('resize', this.resize, this);
+    this.scale.on("resize", this.resize, this);
 
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
@@ -212,7 +212,6 @@ class scenaJuego extends Phaser.Scene {
     const startX = width * 1.4;
     const startY = height * 1.5;
 
-
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
 
     // Botones de movimiento
@@ -365,6 +364,10 @@ class scenaJuego extends Phaser.Scene {
     // Detener la generación de enemigos
     this.eventos?.forEach((evento) => evento.remove());
 
+    // Congelar la pantalla y desactivar las físicas
+    this.scene.pause();
+    this.physics.pause();
+
     // Mostrar texto de Game Over
     const gameOverText = this.add
       .text(this.scale.width / 2, this.scale.height / 2, "Game Over", {
@@ -419,6 +422,54 @@ class scenaJuego extends Phaser.Scene {
     reiniciarBtn.on("pointerdown", () => {
       this.reiniciarJuego();
     });
+  }
+
+  reiniciarJuego() {
+    // Reiniciar variables del juego
+    this.score = 0;
+    this.vida = 100;
+    this.scoreText.setText(`Score: ${this.score}`);
+    this.actualizarBarraVida();
+
+    // Limpiar enemigos existentes
+    this.enemigos.clear(true, true);
+
+    // Reposicionar la nave
+    this.nave.x = 200;
+    this.nave.y = 300;
+    this.nave.setAlpha(1);
+
+    // Limpiar balas existentes
+    this.balas.clear(true, true);
+
+    // Reiniciar la música
+    this.musicaJuego.play();
+
+    // Eliminar textos de Game Over
+    this.children.list
+      .filter((child) => child instanceof Phaser.GameObjects.Text)
+      .forEach((text) => {
+        if (text !== this.scoreText) {
+          text.destroy();
+        }
+      });
+
+    // Reactivar la generación de enemigos
+    this.eventos = [
+      this.time.addEvent({
+        delay: 2000,
+        callback: this.generarEnemigo,
+        callbackScope: this,
+        loop: true,
+      }),
+    ];
+
+    // Reactivar la capacidad de disparar
+    this.puedeDisparar = true;
+
+    // Reanudar la escena y las físicas
+    this.scene.resume();
+    this.physics.resume();
   }
 
   reiniciarJuego() {
