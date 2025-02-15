@@ -209,8 +209,8 @@ class scenaJuego extends Phaser.Scene {
 
     const offsetX = width * 0.12;
     const offsetY = height * 0.12;
-    const startX = width * 1.4;
-    const startY = height * 1.5;
+    const startX = width * 1.5;
+    const startY = height * 0.7;
 
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
 
@@ -241,7 +241,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Botón de disparo
     this.botonDisparo = this.add
-      .image(width * 0.15, height * 1.4, "botonDisparo")
+      .image(width * 0.85, height * 0.4, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
