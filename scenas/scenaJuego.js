@@ -37,7 +37,7 @@ class scenaJuego extends Phaser.Scene {
   }
 
   create() {
-    this.scale.on('resize', this.resize, this);
+    this.scale.on("resize", this.resize, this);
 
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
@@ -212,7 +212,6 @@ class scenaJuego extends Phaser.Scene {
     const startX = width * 1.4;
     const startY = height * 1.5;
 
-
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
 
     // Botones de movimiento
@@ -356,21 +355,21 @@ class scenaJuego extends Phaser.Scene {
     this.musicaJuego.stop();
     this.sonidoGameOver.play();
 
-    // Pausar la física del juego
+    // Pausar solo la física del juego en lugar de toda la escena
     this.physics.pause();
 
     // Detener el movimiento de la nave y enemigos
     this.nave.setVelocity(0, 0);
     this.enemigos.children.each((enemigo) => {
       enemigo.setVelocity(0, 0);
-      enemigo.anims.pause(); // Pausar la animación de cada enemigo
+      enemigo.anims.pause();
     });
 
     // Detener la generación de enemigos
     this.eventos?.forEach((evento) => evento.remove());
 
-    // Detener el movimiento del fondo
-    this.scene.pause(); // Esto detendrá el método update
+    // Variable para controlar la pausa del fondo
+    this.isGameOver = true;
 
     // Mostrar texto de Game Over
     const gameOverText = this.add
@@ -390,7 +389,8 @@ class scenaJuego extends Phaser.Scene {
         stroke: "#000",
         strokeThickness: 4,
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(1000);
 
     // Botón de reinicio con animación de parpadeo
     const reiniciarBtn = this.add
@@ -411,9 +411,10 @@ class scenaJuego extends Phaser.Scene {
         strokeThickness: 4,
       })
       .setOrigin(0.5)
-      .setInteractive();
+      .setInteractive()
+      .setDepth(1000);
 
-    // Animación de parpadeo SOLO para "Reiniciar"
+    // Animación de parpadeo para el botón de reinicio
     this.tweens.add({
       targets: reiniciarBtn,
       alpha: 0,
@@ -422,6 +423,9 @@ class scenaJuego extends Phaser.Scene {
       repeat: -1,
     });
 
+    // Hacer el botón interactivo
+    reiniciarBtn.setInteractive({ useHandCursor: true });
+
     // Evento del botón de reinicio
     reiniciarBtn.on("pointerdown", () => {
       this.reiniciarJuego();
@@ -429,11 +433,11 @@ class scenaJuego extends Phaser.Scene {
   }
 
   reiniciarJuego() {
+    // Quitar el estado de game over
+    this.isGameOver = false;
+
     // Reanudar la física del juego
     this.physics.resume();
-
-    // Reanudar la escena
-    this.scene.resume();
 
     // Reiniciar variables del juego
     this.score = 0;
@@ -517,28 +521,31 @@ class scenaJuego extends Phaser.Scene {
   }
 
   update() {
-    // Movimiento de los elementos en pantalla
-    this.GranPlaneta.x -= 0.03;
-    this.planetas.x -= 1;
-    this.planetas2.x -= 1;
-    this.estrellas.x -= 1;
-    this.estrellas1.x -= 1;
-    this.estrellas2.x -= 1;
+    // Solo mover el fondo si no está en game over
+    if (!this.isGameOver) {
+      // Movimiento de los elementos en pantalla
+      this.GranPlaneta.x -= 0.03;
+      this.planetas.x -= 1;
+      this.planetas2.x -= 1;
+      this.estrellas.x -= 1;
+      this.estrellas1.x -= 1;
+      this.estrellas2.x -= 1;
 
-    // Reiniciar posición de los elementos cuando salen de la pantalla
-    if (this.planetas.x < -50) this.planetas.x = 850;
-    if (this.planetas2.x < -50) this.planetas2.x = 850;
-    if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
-    if (this.estrellas.x < -50) this.estrellas.x = 850;
-    if (this.estrellas1.x < -50) this.estrellas1.x = 850;
-    if (this.estrellas2.x < -50) this.estrellas2.x = 850;
+      // Reiniciar posición de los elementos cuando salen de la pantalla
+      if (this.planetas.x < -50) this.planetas.x = 850;
+      if (this.planetas2.x < -50) this.planetas2.x = 850;
+      if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
+      if (this.estrellas.x < -50) this.estrellas.x = 850;
+      if (this.estrellas1.x < -50) this.estrellas1.x = 850;
+      if (this.estrellas2.x < -50) this.estrellas2.x = 850;
 
-    // Eliminar balas fuera de pantalla
-    this.balas.children.each((bala) => {
-      if (bala.active && bala.x > this.scale.width) {
-        bala.setActive(false);
-        bala.setVisible(false);
-      }
-    });
+      // Eliminar balas fuera de pantalla
+      this.balas.children.each((bala) => {
+        if (bala.active && bala.x > this.scale.width) {
+          bala.setActive(false);
+          bala.setVisible(false);
+        }
+      });
+    }
   }
 }
