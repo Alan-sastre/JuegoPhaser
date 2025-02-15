@@ -8,7 +8,7 @@ var config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1000,
-    height:500,
+    height: 500,
   },
   physics: {
     default: "arcade",
@@ -21,7 +21,7 @@ var config = {
     pixelArt: true,
     antialias: false,
   },
-  scene: [scenaPrincipal, scenaIntro, scenaRompecabezas,scenaJuego],
+  scene: [scenaJuego], //scenaPrincipal, scenaIntro, scenaRompecabezas,
 };
 
 
