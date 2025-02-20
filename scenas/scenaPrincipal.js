@@ -66,7 +66,7 @@ class scenaPrincipal extends Phaser.Scene {
     const tituloWidth = titulo.width;
     const tituloHeight = titulo.height;
 
-    
+
     const estrella = this.add.sprite(
       titulo.x + tituloWidth / 2 + 20,
       titulo.y, // Posición Y: misma altura que el texto

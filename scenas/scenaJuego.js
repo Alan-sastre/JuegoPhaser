@@ -6,9 +6,21 @@ class scenaJuego extends Phaser.Scene {
     this.score = 0;
     this.vida = 100;
     this.isMobile = false;
+    this.jefeFinal = null; // Variable para el jefe final
+    this.balasJefe = 3; // Grupo de balas del jefe
+    this.eventos = [];
+    this.disparoJefeEvento = null; // Evento para los disparos del jefe
+    this.timerAtaqueJefe = null; // Nueva variable para controlar el timer
+    this.jefeFinalActivo = false; // Estado del jefe final
+    this.vidaJefeFinal = 1000; // Vida del jefe final
+    this.tiempoAtaqueJefe = 900; // Tiempo entre ataques del jefe
+    this.jefeFinalVelocidad = 2; // Velocidad de movimiento del jefe final
+
+
   }
 
   preload() {
+    // Cargar recursos (imágenes, sonidos, etc.)
     this.load.image("background", "assets/scenaJuego/fondo.png");
     this.load.image("planetas", "assets/scenaJuego/planetas.png");
     this.load.image("nave", "assets/scenaJuego/nave.png");
@@ -18,11 +30,7 @@ class scenaJuego extends Phaser.Scene {
     this.load.image("fondo1", "assets/scenaJuego/a.jpg");
     this.load.image("bala", "assets/scenaJuego/bala.png");
     this.load.image("nivel", "assets/scenaJuego/nivel1.jpg");
-    this.load.spritesheet("enemigo", "assets/scenaJuego/enemigo.png", {
-      frameWidth: 32,
-      frameHeight: 32,
-      endFrame: 7,
-    });
+    this.load.image("enemigo", "assets/scenaJuego/enemigo.png");
     this.load.audio("sonidoDisparo", "assets/scenaJuego/disparo.mp3");
     this.load.audio("musicaJuego", "assets/scenaJuego/musicaPelea.mp3");
     this.load.audio("sonidoExplosion", "assets/scenaJuego/destruction.mp3");
@@ -34,10 +42,23 @@ class scenaJuego extends Phaser.Scene {
     this.load.image("botonIzquierda", "assets/scenaJuego/izquierda.png");
     this.load.image("botonDerecha", "assets/scenaJuego/derecha.png");
     this.load.image("botonDisparo", "assets/scenaJuego/disparo.png");
+
+    // Jefe Final
+    this.load.image("jefeFinal", "assets/scenaJuego/jefeFinal.png");
+    this.load.image("balaJefe", "assets/scenaJuego/bala.png");
+          this.load.audio(
+            "sonidoImpactoJefe",
+            "assets/scenaJuego/sonidoImpactoJefe.mp3"
+          );
   }
 
   create() {
-    this.scale.on("resize", this.resize, this);
+    // Verificar que this.resize sea una función antes de agregar el listener
+    if (typeof this.resize === "function") {
+      this.scale.on("resize", this.resize.bind(this), this);
+    } else {
+      console.error("this.resize no es una función");
+    }
 
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
@@ -45,6 +66,22 @@ class scenaJuego extends Phaser.Scene {
     // Esperar un frame para asegurarse de que las dimensiones estén correctas
     this.time.delayedCall(1, () => {
       this.initializeGame();
+    });
+
+    // Crear la nave
+    this.nave = this.physics.add.sprite(200, 300, "nave").setScale(0.3);
+    this.nave.setCollideWorldBounds(true);
+
+    // Ajustar el tamaño del cuerpo físico de la nave
+    this.nave.setSize(40, 40).setOffset(10, 10);
+
+    this.nave.setOffset(this.nave.width * 0.25, this.nave.height * 0.25);
+
+    // Crear el grupo de balas del jefe
+    this.balasJefe = this.physics.add.group({
+      defaultKey: "balaJefe",
+      maxSize: 30,
+      allowGravity: false,
     });
   }
 
@@ -57,15 +94,6 @@ class scenaJuego extends Phaser.Scene {
     }
   }
 
-  removeExistingControls() {
-    // Eliminar botones existentes si existen
-    if (this.botonArriba) this.botonArriba.destroy();
-    if (this.botonAbajo) this.botonAbajo.destroy();
-    if (this.botonIzquierda) this.botonIzquierda.destroy();
-    if (this.botonDerecha) this.botonDerecha.destroy();
-    if (this.botonDisparo) this.botonDisparo.destroy();
-  }
-
   initializeGame() {
     const { width, height } = this.scale.displaySize;
 
@@ -76,7 +104,9 @@ class scenaJuego extends Phaser.Scene {
       this.scale.height / this.fondo.height
     );
 
-    //const { width, height } = this.scale.displaySize;
+    // Añadir barra de vida del jefe final
+    this.barraVidaJefe = this.add.graphics();
+    this.barraVidaJefe.setVisible(false); // Inicialmente oculta
 
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
@@ -104,13 +134,14 @@ class scenaJuego extends Phaser.Scene {
     this.estrellas2 = this.add.image(800, 300, "estrellas").setScale(0.2);
     this.GranPlaneta2 = this.add.image(100, 450, "GranPlaneta2").setScale(1);
 
+
     // Sonidos
     this.sonidoDisparo = this.sound.add("sonidoDisparo");
     this.sonidoExplosion = this.sound.add("sonidoExplosion");
     this.sonidoGameOver = this.sound.add("sonidoGameOver");
 
     // Físicas de la nave
-    this.nave = this.physics.add.sprite(200, 300, "nave");
+    this.nave = this.physics.add.sprite(200, 300, "nave").setScale(0.3);
     this.nave.setCollideWorldBounds(true);
 
     // Grupo de balas
@@ -131,13 +162,7 @@ class scenaJuego extends Phaser.Scene {
     // Grupo de enemigos
     this.enemigos = this.physics.add.group();
 
-    // Configurar la animación del enemigo
-    this.anims.create({
-      key: "enemigoAnim",
-      frames: this.anims.generateFrameNumbers("enemigo", { start: 0, end: 7 }),
-      frameRate: 10,
-      repeat: -1,
-    });
+
 
     // Colisiones entre balas y enemigos
     this.physics.add.collider(this.balas, this.enemigos, (bala, enemigo) => {
@@ -161,12 +186,14 @@ class scenaJuego extends Phaser.Scene {
     });
 
     // Generar enemigos cada 2 segundos
-    this.time.addEvent({
-      delay: 2000,
-      callback: this.generarEnemigo,
-      callbackScope: this,
-      loop: true,
-    });
+    this.eventos = [
+      this.time.addEvent({
+        delay: 1000,
+        callback: this.generarEnemigo,
+        callbackScope: this,
+        loop: true,
+      }),
+    ];
 
     // Texto del score
     this.scoreText = this.add.text(16, 16, "Score: 0", {
@@ -199,6 +226,236 @@ class scenaJuego extends Phaser.Scene {
         this.addMobileControls();
       });
     }
+  }
+
+  crearJefeFinal() {
+    if (!this.jefeFinalActivo) {
+      this.jefeFinalActivo = true;
+
+      // Crear el jefe final
+      this.jefeFinal = this.physics.add.sprite(
+        this.scale.width - 100,
+        this.scale.height / 2,
+        "jefeFinal"
+      );
+      this.jefeFinal.setScale(1);
+      this.jefeFinal.setCollideWorldBounds(true);
+      this.jefeFinal.setBounce(1);
+      this.jefeFinal.setImmovable(true);
+      this.jefeFinal.setVelocityY(100); // Velocidad inicial
+
+      // Crear el grupo de balas del jefe si no existe
+      if (!this.balasJefe) {
+        this.balasJefe = this.physics.add.group({
+          defaultKey: "balaJefe",
+          maxSize: 30,
+          allowGravity: false,
+        });
+      }
+
+      // Configurar colisiones entre balas del jefe y la nave
+      this.physics.add.overlap(
+        this.balasJefe,
+        this.nave,
+        (nave, bala) => {
+          console.log(" Bala impactó en la nave!");
+          bala.destroy();
+          this.naveParpadea();
+          this.vida -= 10;
+          this.actualizarBarraVida();
+          if (this.vida <= 0) {
+            this.gameOver();
+          }
+        },
+        null,
+        this
+      );
+
+      // Mostrar barra de vida del jefe
+      this.barraVidaJefe = this.add.graphics();
+      this.barraVidaJefe.setVisible(true); // Hacer visible la barra de vida
+      this.actualizarBarraVidaJefe(); // Dibujar la barra de vida
+
+      // Iniciar patrón de ataque del jefe con un temporizador controlado
+      this.timerAtaqueJefe = this.time.addEvent({
+        delay: this.tiempoAtaqueJefe, // Frecuencia de disparo
+        callback: this.ataqueJefeFinal,
+        callbackScope: this,
+        loop: true,
+      });
+      // Colisión entre balas y jefe final
+      this.physics.add.collider(this.balas, this.jefeFinal, (jefe, bala) => {
+        bala.destroy();
+        this.vidaJefeFinal -= 20;
+        this.actualizarBarraVidaJefe();
+
+      this.sound.play("sonidoImpactoJefe", {
+          volume: 1,
+          loop: false,
+          detune: 0,
+        });
+
+        // Efecto visual de daño
+        this.jefeFinal.setTint(0xff0000);
+        this.time.delayedCall(100, () => {
+          if (this.jefeFinal && this.jefeFinal.active) {
+            this.jefeFinal.clearTint();
+          }
+        });
+
+        if (this.vidaJefeFinal <= 0) {
+          this.derrotarJefeFinal();
+        }
+      });
+    }
+  }
+
+  actualizarBarraVidaJefe() {
+    const { width, height } = this.scale.displaySize;
+
+    // Limpiar la barra de vida antes de redibujarla
+    this.barraVidaJefe.clear();
+
+    // Dibujar el fondo de la barra de vida (opcional)
+    this.barraVidaJefe.fillStyle(0x000000, 1); // Color negro de fondo
+    this.barraVidaJefe.fillRect(
+      this.jefeFinal.x - 100,
+      this.jefeFinal.y + 60,
+      200,
+      20
+    ); // Fondo de la barra
+
+    // Dibujar la barra de vida (roja)
+    this.barraVidaJefe.fillStyle(0xff0000, 1); // Color rojo
+    this.barraVidaJefe.fillRect(
+      this.jefeFinal.x - 100,
+      this.jefeFinal.y + 60,
+      (this.vidaJefeFinal / 1000) * 200, // Ancho proporcional a la vida
+      20
+    );
+
+    // Dibujar el borde de la barra de vida (opcional)
+    this.barraVidaJefe.lineStyle(2, 0xffffff); // Borde blanco
+    this.barraVidaJefe.strokeRect(
+      this.jefeFinal.x - 100,
+      this.jefeFinal.y + 60,
+      200,
+      20
+    );
+    this.barraVidaJefe.setDepth(1000); // Asegurar que esté en la capa superior
+  }
+
+  ataqueJefeFinal() {
+    if (this.jefeFinal && this.jefeFinal.active && this.jefeFinalActivo) {
+      const naveX = this.nave.x;
+      const naveY = this.nave.y;
+      const jefeX = this.jefeFinal.x;
+      const jefeY = this.jefeFinal.y;
+
+      const angle = Phaser.Math.Angle.Between(jefeX, jefeY, naveX, naveY);
+      const bala = this.balasJefe.create(jefeX, jefeY, "balaJefe");
+
+      if (bala) {
+        bala.setActive(true);
+        bala.setVisible(true);
+        bala.setTint(0xff0000); // Color rojo para distinguirlas
+        bala.setVelocity(Math.cos(angle) * 200, Math.sin(angle) * 100);
+        bala.body.setAllowGravity(false); // Desactivar gravedad
+        bala.setCollideWorldBounds(false); // No limitar a los bordes
+
+        // Asegurar que el cuerpo de la bala sea detectado en colisiones
+        bala.body.setSize(20, 20); // Ajusta el tamaño del cuerpo físico
+        bala.body.setOffset(4, 4); // Ajusta el offset si es necesario
+        bala.body.setImmovable(false);
+        bala.body.setBounce(0);
+
+        // Destruir la bala si no impacta en 3 segundos
+        this.time.delayedCall(6000, () => {
+          if (bala && bala.active) {
+            bala.destroy();
+          }
+        });
+      }
+    }
+  }
+
+  derrotarJefeFinal() {
+    if (!this.jefeFinal || !this.jefeFinal.active) return;
+
+    // Detener el timer de ataque antes de destruir al jefe
+    if (this.timerAtaqueJefe) {
+      this.timerAtaqueJefe.remove();
+      this.timerAtaqueJefe = null;
+    }
+
+    // Limpiar todas las balas del jefe
+    this.balasJefe.clear(true, true);
+
+    // Efecto de explosión
+    this.jefeFinal.setTint(0xff0000);
+    this.sonidoExplosion.play();
+
+    this.time.delayedCall(100, () => {
+      if (this.jefeFinal && this.jefeFinal.active) {
+        this.jefeFinal.destroy();
+      }
+      if (this.barraVidaJefe) {
+        this.barraVidaJefe.setVisible(false);
+      }
+      this.score += 500;
+      this.scoreText.setText(`Score: ${this.score}`);
+      this.jefeFinalActivo = false;
+
+      // Pausar el juego
+      this.physics.pause();
+
+      // Mostrar mensaje de victoria
+      const victoriaText = this.add
+        .text(this.scale.width / 2, this.scale.height / 2, "¡Jefe Derrotado!", {
+          fontSize: "48px",
+          fill: "#fff",
+          stroke: "#000",
+          strokeThickness: 6,
+        })
+        .setOrigin(0.5);
+
+      // Botón de continuar
+      const continuarBtn = this.add
+        .text(this.scale.width / 2, this.scale.height / 2 + 60, "", {
+          fontSize: "36px",
+          fill: "#fff",
+          stroke: "#000",
+          strokeThickness: 4,
+        })
+        .setOrigin(0.5)
+        .setInteractive();
+
+      // Animación de parpadeo para el botón de continuar
+      this.tweens.add({
+        targets: continuarBtn,
+        alpha: 0,
+        duration: 500,
+        yoyo: true,
+        repeat: -1,
+      });
+
+      // Evento del botón de continuar
+      continuarBtn.on("pointerdown", () => {
+        this.physics.resume(); // Reanudar el juego
+        victoriaText.destroy();
+        continuarBtn.destroy();
+
+        // Reiniciar la generación de enemigos
+        this.eventos = [
+          this.time.addEvent({
+            delay: 2000,
+            callback: this.generarEnemigo,
+            callbackScope: this,
+            loop: true,
+          }),
+        ];
+      });
+    });
   }
 
   addMobileControls() {
@@ -346,12 +603,17 @@ class scenaJuego extends Phaser.Scene {
   }
 
   actualizarBarraVida() {
-    this.barraVida.clear();
-    this.barraVida.fillStyle(0xff0000, 1);
-    this.barraVida.fillRect(16, 60, this.vida, 20);
+    this.barraVida.clear(); // Limpiar la barra de vida anterior
+    this.barraVida.fillStyle(0xff0000, 1); // Color rojo
+    this.barraVida.fillRect(16, 60, this.vida, 20); // Dibujar la barra de vida
   }
 
   gameOver() {
+    if (this.timerAtaqueJefe) {
+      this.timerAtaqueJefe.remove();
+      this.timerAtaqueJefe = null;
+    }
+
     this.musicaJuego.stop();
     this.sonidoGameOver.play();
 
@@ -366,7 +628,10 @@ class scenaJuego extends Phaser.Scene {
     });
 
     // Detener la generación de enemigos
-    this.eventos?.forEach((evento) => evento.remove());
+    if (this.eventos) {
+      this.eventos.forEach((evento) => evento.remove());
+      this.eventos = [];
+    }
 
     // Variable para controlar la pausa del fondo
     this.isGameOver = true;
@@ -433,6 +698,23 @@ class scenaJuego extends Phaser.Scene {
   }
 
   reiniciarJuego() {
+    // Resetear variables del jefe final
+    this.jefeFinalActivo = false;
+    this.vidaJefeFinal = 1000;
+    if (this.jefeFinal) {
+      this.jefeFinal.destroy();
+    }
+    if (this.timerAtaqueJefe) {
+      this.timerAtaqueJefe.remove();
+      this.timerAtaqueJefe = null;
+    }
+    this.balasJefe.clear(true, true);
+    this.barraVidaJefe?.setVisible(false);
+
+    // Resto del código de reiniciarJuego...
+    this.isGameOver = false;
+    this.physics.resume();
+
     // Quitar el estado de game over
     this.isGameOver = false;
 
@@ -483,22 +765,25 @@ class scenaJuego extends Phaser.Scene {
   }
 
   generarEnemigo() {
-    const x = this.scale.width + 50;
-    const y = Phaser.Math.Between(50, this.scale.height - 50);
+    if (!this.jefeFinalActivo) {
+      const x = this.scale.width + 50;
+      const y = Phaser.Math.Between(50, this.scale.height - 50);
 
-    const enemigo = this.enemigos.create(x, y, "enemigo");
-    enemigo.setVelocityX(-100);
-    enemigo.anims.play("enemigoAnim");
+      const enemigo = this.enemigos.create(x, y, "enemigo");
+      enemigo.setScale(0.5);
+      enemigo.setVelocityX(-100);
+      enemigo.anims.play("enemigoAnim");
 
-    // Eliminar el enemigo cuando sale de la pantalla
-    enemigo.setCollideWorldBounds(false);
-    enemigo.checkWorldBounds = true;
-    enemigo.outOfBoundsKill = true;
+      // Eliminar el enemigo cuando sale de la pantalla
+      enemigo.setCollideWorldBounds(false);
+      enemigo.checkWorldBounds = true;
+      enemigo.outOfBoundsKill = true;
+    }
   }
 
   disparar() {
     if (this.puedeDisparar) {
-      const bala = this.balas.get(this.nave.x + 40, this.nave.y + 10);
+      const bala = this.balas.get(this.nave.x + 40, this.nave.y + 0);
       if (bala) {
         bala.setActive(true);
         bala.setVisible(true);
@@ -514,15 +799,51 @@ class scenaJuego extends Phaser.Scene {
   }
 
   naveParpadea() {
-    this.nave.setAlpha(0.5);
+    this.nave.setAlpha(0.5); // Hacer la nave semi-transparente
     this.time.delayedCall(100, () => {
-      this.nave.setAlpha(1);
+      this.nave.setAlpha(1); // Restaurar la opacidad de la nave
     });
   }
 
   update() {
-    // Solo mover el fondo si no está en game over
-    if (!this.isGameOver) {
+    if (!this.isGameOver && !this.physics.world.isPaused) {
+      // Verificar si se alcanzó la puntuación para el jefe final
+      if (this.score >= 100 && !this.jefeFinalActivo) {
+        this.crearJefeFinal();
+      }
+
+
+      // Mover el jefe final
+      if (this.jefeFinal && this.jefeFinal.active && this.jefeFinalActivo) {
+        // Cambiar la dirección cuando llega a los límites
+        if (this.jefeFinal.y <= 100) {
+          this.jefeFinal.setVelocityY(150);
+        } else if (this.jefeFinal.y >= this.scale.height - 100) {
+          this.jefeFinal.setVelocityY(-150);
+        }
+
+        // Actualizar la barra de vida del jefe
+        if (this.barraVidaJefe) {
+          this.actualizarBarraVidaJefe();
+        }
+      }
+
+      // Limpiar balas fuera de pantalla
+      if (this.balasJefe && this.balasJefe.children) {
+        this.balasJefe.children.each((bala) => {
+          if (bala.active) {
+            if (
+              bala.x < -50 ||
+              bala.x > this.scale.width + 50 ||
+              bala.y < -50 ||
+              bala.y > this.scale.height + 50
+            ) {
+              bala.destroy();
+            }
+          }
+        });
+      }
+
       // Movimiento de los elementos en pantalla
       this.GranPlaneta.x -= 0.03;
       this.planetas.x -= 1;

@@ -224,7 +224,7 @@ class scenaIntro extends Phaser.Scene {
 
         if (this.correctAnswersSelected === 2) {
           this.showCongratulations();
-          this.time.delayedCall(2000, () => {
+          this.time.delayedCall(2600, () => {
             questionBox.destroy();
             questionTextDisplay.destroy();
             optionBoxes.forEach(({ optionBox, optionText }) => {
