@@ -55,11 +55,6 @@ class scenaJuego extends Phaser.Scene {
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
 
-    // Esperar un frame para asegurarse de que las dimensiones estén correctas
-    this.time.delayedCall(1, () => {
-      this.initializeGame();
-    });
-
     // Crear la nave
     this.nave = this.physics.add.sprite(200, 300, "nave").setScale(0.3);
     this.nave.setCollideWorldBounds(true);
@@ -74,6 +69,9 @@ class scenaJuego extends Phaser.Scene {
 
     // Escuchar el evento de redimensionamiento
     this.scale.on("resize", this.resize, this);
+
+    // Inicializar el juego
+    this.initializeGame();
   }
 
   resize(gameSize, baseSize, displaySize, resolution) {
@@ -86,7 +84,9 @@ class scenaJuego extends Phaser.Scene {
       const { width, height } = this.scale.displaySize;
 
       // Redimensionar el fondo
-      this.fondo.setScale(width / this.fondo.width, height / this.fondo.height);
+      if (this.fondo) {
+        this.fondo.setDisplaySize(width, height);
+      }
 
       // Redimensionar y reposicionar los botones si estamos en móvil
       if (this.isMobile && this.botonArriba) {
@@ -95,41 +95,12 @@ class scenaJuego extends Phaser.Scene {
     }, 100); // Ajusta este valor según sea necesario
   }
 
-  updateMobileControls(width, height) {
-    const botonScale = Math.min(width, height) * 0.01;
-    const botonDisparoScale = botonScale * 2;
-
-    const offsetX = width * 0.19;
-    const offsetY = height * 0.19;
-    const startX = width * 1.9;
-    const startY = height * 1.6;
-
-    // Actualizar posición y escala de los botones
-    this.botonArriba
-      .setPosition(startX + offsetX, startY - offsetY)
-      .setScale(botonScale);
-
-    this.botonAbajo
-      .setPosition(startX + offsetX, startY + offsetY)
-      .setScale(botonScale);
-
-    this.botonIzquierda.setPosition(startX, startY).setScale(botonScale);
-
-    this.botonDerecha
-      .setPosition(startX + offsetX * 2, startY)
-      .setScale(botonScale);
-
-    this.botonDisparo
-      .setPosition(width * 0.17, height * 1.5)
-      .setScale(botonDisparoScale);
-  }
-
   initializeGame() {
     const { width, height } = this.scale.displaySize;
 
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
-    this.fondo.setScale(width / this.fondo.width, height / this.fondo.height);
+    this.fondo.setDisplaySize(width, height);
 
     // Añadir barra de vida del jefe final
     this.barraVidaJefe = this.add.graphics();
