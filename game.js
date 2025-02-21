@@ -14,7 +14,7 @@ var config = {
     default: "arcade",
     arcade: {
       gravity: { y: 0 },
-      debug: true,
+      debug: false,
     },
   },
   render: {
@@ -25,4 +25,3 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
-  
