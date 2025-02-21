@@ -459,23 +459,23 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    // Ajusta el factor de escala para que los botones tengan un tamaño adecuado.
-    const botonScale = Math.min(width, height) * 0.05; // Puedes modificar este valor para agrandar o reducir los botones
-    const botonDisparoScale = botonScale * 1.5;
+    // Factor de escala reducido para que los botones no sean tan grandes
+    const botonScale = Math.min(width, height) * 0.04;
+    const botonDisparoScale = botonScale * 1.2;
 
-    // Posiciones para los controles de movimiento (lado izquierdo)
-    const movementStartX = width * 0.15;
-    const movementStartY = height * 0.8;
-    // Define un offset para separar los botones en el layout en cruz.
+    // Posiciones para los controles:
+    // - Los botones de movimiento se ubicarán en el lado derecho.
+    // - El botón de disparo se ubicará en el lado izquierdo.
     const offsetMovement = width * 0.07;
+    const movementStartX = width * 0.85; // Lado derecho
+    const movementStartY = height * 0.8;
 
-    // Posición para el botón de disparo (lado derecho)
-    const shootX = width * 0.85;
+    const shootX = width * 0.15; // Lado izquierdo
     const shootY = height * 0.8;
 
-    this.input.addPointer(3); // Permitir hasta 3 toques simultáneos
+    this.input.addPointer(3); // Permite hasta 3 toques simultáneos
 
-    // Botones de movimiento
+    // Botones de movimiento (lado derecho)
     this.botonArriba = this.add
       .image(movementStartX, movementStartY - offsetMovement, "botonArriba")
       .setInteractive()
@@ -500,7 +500,7 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo (lado derecho)
+    // Botón de disparo (lado izquierdo)
     this.botonDisparo = this.add
       .image(shootX, shootY, "botonDisparo")
       .setInteractive()
