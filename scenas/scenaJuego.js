@@ -464,7 +464,7 @@ class scenaJuego extends Phaser.Scene {
 
     const offsetX = width * 0.19;
     const offsetY = height * 0.19;
-    const startX = width * 0.15;
+    const startX = width * 0.17;
     const startY = height * 1;
 
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
