@@ -459,11 +459,12 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    // Ajustar escala mínima para asegurar que los botones sean visibles en todas las pantallas
-    const botonScale = Math.max(50, Math.min(width, height) * 0.05);
-    const botonDisparoScale = botonScale * 1.5;
+    // Ajusta el factor de escala para que los botones sean más pequeños.
+    // Puedes modificar el valor 0.0008 según el tamaño deseado.
+    const botonScale = Math.min(width, height) * 0.0008;
+    const botonDisparoScale = botonScale * 1.2;
 
-    // Posiciones más adecuadas para los controles
+    // Posiciones para los controles
     const offsetX = width * 0.1;
     const offsetY = height * 0.1;
     const startX = width * 0.15;
@@ -496,7 +497,7 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo, ubicado en la parte derecha inferior
+    // Botón de disparo, ubicado en la parte inferior derecha
     this.botonDisparo = this.add
       .image(width * 0.85, height * 0.8, "botonDisparo")
       .setInteractive()
@@ -504,38 +505,34 @@ class scenaJuego extends Phaser.Scene {
       .setDepth(10);
 
     // Movimiento vertical
-    this.botonArriba
-      .on("pointerdown", () => {
-        this.nave.setVelocityY(-200);
-      })
-      .on("pointerup", () => {
-        this.nave.setVelocityY(0);
-      });
+    this.botonArriba.on("pointerdown", () => {
+      this.nave.setVelocityY(-200);
+    });
+    this.botonArriba.on("pointerup", () => {
+      this.nave.setVelocityY(0);
+    });
 
-    this.botonAbajo
-      .on("pointerdown", () => {
-        this.nave.setVelocityY(200);
-      })
-      .on("pointerup", () => {
-        this.nave.setVelocityY(0);
-      });
+    this.botonAbajo.on("pointerdown", () => {
+      this.nave.setVelocityY(200);
+    });
+    this.botonAbajo.on("pointerup", () => {
+      this.nave.setVelocityY(0);
+    });
 
     // Movimiento horizontal
-    this.botonIzquierda
-      .on("pointerdown", () => {
-        this.nave.setVelocityX(-200);
-      })
-      .on("pointerup", () => {
-        this.nave.setVelocityX(0);
-      });
+    this.botonIzquierda.on("pointerdown", () => {
+      this.nave.setVelocityX(-200);
+    });
+    this.botonIzquierda.on("pointerup", () => {
+      this.nave.setVelocityX(0);
+    });
 
-    this.botonDerecha
-      .on("pointerdown", () => {
-        this.nave.setVelocityX(200);
-      })
-      .on("pointerup", () => {
-        this.nave.setVelocityX(0);
-      });
+    this.botonDerecha.on("pointerdown", () => {
+      this.nave.setVelocityX(200);
+    });
+    this.botonDerecha.on("pointerup", () => {
+      this.nave.setVelocityX(0);
+    });
 
     // Control de disparo
     let disparoActivo = false;
@@ -549,10 +546,16 @@ class scenaJuego extends Phaser.Scene {
         },
         loop: true,
       });
+      // Disparo inicial
       this.disparar();
     });
 
     this.botonDisparo.on("pointerup", () => {
+      disparoActivo = false;
+      if (this.disparoInterval) this.disparoInterval.remove();
+    });
+
+    this.botonDisparo.on("pointerout", () => {
       disparoActivo = false;
       if (this.disparoInterval) this.disparoInterval.remove();
     });
