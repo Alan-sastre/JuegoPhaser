@@ -456,13 +456,15 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.min(width, height) * 0.010;
-    const botonDisparoScale = botonScale * 1.8;
+    // Ajustar la escala de los botones
+    const botonScale = Math.min(width, height) * 0.0015; // Aumentar la escala
+    const botonDisparoScale = botonScale * 2.0; // Hacer el botón de disparo más grande
 
-    const offsetX = width * 0.17;
-    const offsetY = height * 0.17;
-    const startX = width * 1.9;
-    const startY = height * 1.5;
+    // Ajustar las coordenadas de los botones
+    const offsetX = width * 0.15; // Espaciado horizontal entre botones
+    const offsetY = height * 0.15; // Espaciado vertical entre botones
+    const startX = width * 0.1; // Posición inicial en X
+    const startY = height * 0.8; // Posición inicial en Y (cerca de la parte inferior)
 
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
 
@@ -491,9 +493,9 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo
+    // Botón de disparo (colocado en el lado opuesto de la pantalla)
     this.botonDisparo = this.add
-      .image(width * 0.17, height * 1.5, "botonDisparo")
+      .image(width * 0.9, height * 0.8, "botonDisparo") // Posición en el lado derecho
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
