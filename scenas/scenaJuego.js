@@ -460,7 +460,7 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale.displaySize;
 
     // Factor de escala reducido para que los botones no sean tan grandes
-    const botonScale = Math.min(width, height) * 0.04;
+    const botonScale = Math.min(width, height) * 0.4;
     const botonDisparoScale = botonScale * 1.2;
 
     // Posiciones para los controles:
