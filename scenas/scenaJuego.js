@@ -15,8 +15,6 @@ class scenaJuego extends Phaser.Scene {
     this.vidaJefeFinal = 1000; // Vida del jefe final
     this.tiempoAtaqueJefe = 900; // Tiempo entre ataques del jefe
     this.jefeFinalVelocidad = 2; // Velocidad de movimiento del jefe final
-
-
   }
 
   preload() {
@@ -46,10 +44,10 @@ class scenaJuego extends Phaser.Scene {
     // Jefe Final
     this.load.image("jefeFinal", "assets/scenaJuego/jefeFinal.png");
     this.load.image("balaJefe", "assets/scenaJuego/bala.png");
-          this.load.audio(
-            "sonidoImpactoJefe",
-            "assets/scenaJuego/sonidoImpactoJefe.mp3"
-          );
+    this.load.audio(
+      "sonidoImpactoJefe",
+      "assets/scenaJuego/sonidoImpactoJefe.mp3"
+    );
   }
 
   create() {
@@ -134,7 +132,6 @@ class scenaJuego extends Phaser.Scene {
     this.estrellas2 = this.add.image(800, 300, "estrellas").setScale(0.2);
     this.GranPlaneta2 = this.add.image(100, 450, "GranPlaneta2").setScale(1);
 
-
     // Sonidos
     this.sonidoDisparo = this.sound.add("sonidoDisparo");
     this.sonidoExplosion = this.sound.add("sonidoExplosion");
@@ -161,8 +158,6 @@ class scenaJuego extends Phaser.Scene {
 
     // Grupo de enemigos
     this.enemigos = this.physics.add.group();
-
-
 
     // Colisiones entre balas y enemigos
     this.physics.add.collider(this.balas, this.enemigos, (bala, enemigo) => {
@@ -289,7 +284,7 @@ class scenaJuego extends Phaser.Scene {
         this.vidaJefeFinal -= 20;
         this.actualizarBarraVidaJefe();
 
-      this.sound.play("sonidoImpactoJefe", {
+        this.sound.play("sonidoImpactoJefe", {
           volume: 1,
           loop: false,
           detune: 0,
@@ -461,15 +456,19 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
+    // Ajustar la escala de los botones según el tamaño de la pantalla
     const botonScale = Math.min(width, height) * 0.008;
     const botonDisparoScale = botonScale * 1.8;
 
-    const offsetX = width * 0.17;
-    const offsetY = height * 0.17;
-    const startX = width * 2.2;
-    const startY = height * 1.5;
+    // Ajustar el espaciado entre botones
+    const offsetX = width * 0.08;
+    const offsetY = height * 0.08;
 
-    this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
+    // Posicionar los botones de movimiento en la esquina inferior izquierda
+    const startX = width * 0.15; // 15% desde la izquierda
+    const startY = height * 0.8; // 80% desde arriba
+
+    this.input.addPointer(3);
 
     // Botones de movimiento
     this.botonArriba = this.add
@@ -496,13 +495,14 @@ class scenaJuego extends Phaser.Scene {
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo
+    // Botón de disparo en la esquina inferior derecha
     this.botonDisparo = this.add
-      .image(width * 0.17, height * 1.5, "botonDisparo")
+      .image(width * 0.85, height * 0.8, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
 
+    // El resto del código de los eventos permanece igual
     // Movimiento vertical
     this.botonArriba.on("pointerdown", () => {
       this.nave.setVelocityY(-200);
@@ -811,7 +811,6 @@ class scenaJuego extends Phaser.Scene {
       if (this.score >= 100 && !this.jefeFinalActivo) {
         this.crearJefeFinal();
       }
-
 
       // Mover el jefe final
       if (this.jefeFinal && this.jefeFinal.active && this.jefeFinalActivo) {
