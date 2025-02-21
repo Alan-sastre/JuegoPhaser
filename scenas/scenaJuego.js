@@ -470,7 +470,7 @@ class scenaJuego extends Phaser.Scene {
     const movementStartX = width * 0.95; // Lado derecho
     const movementStartY = height * 0.9;
 
-    const shootX = width * 0.15; // Lado izquierdo
+    const shootX = width * 0.85; // Lado izquierdo
     const shootY = height * 0.8;
 
     this.input.addPointer(3); // Permite hasta 3 toques simultáneos
