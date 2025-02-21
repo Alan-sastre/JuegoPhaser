@@ -466,12 +466,12 @@ class scenaJuego extends Phaser.Scene {
     // Posiciones para los controles:
     // - Los botones de movimiento se ubicarán en el lado derecho.
     // - El botón de disparo se ubicará en el lado izquierdo.
-    const offsetMovement = width * 0.15;
-    const movementStartX = width * 0.85; // Lado derecho
-    const movementStartY = height * 0.9;
+    const offsetMovement = width * 0.12 ;
+    const movementStartX = width * 0.15; // Lado derecho
+    const movementStartY = height * 0.85;
 
-    const shootX = width * 0.2; // Lado izquierdo
-    const shootY = height * 0.95;
+    const shootX = width * 0.85; // Lado izquierdo
+    const shootY = height * 0.85;
 
     this.input.addPointer(3); // Permite hasta 3 toques simultáneos
 
