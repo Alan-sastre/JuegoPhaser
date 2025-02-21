@@ -456,12 +456,12 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.min(width, height) * 0.0010;
-    const botonDisparoScale = botonScale * 2;
+    const botonScale = Math.min(width, height) * 0.008;
+    const botonDisparoScale = botonScale * 1.8;
 
-    const offsetX = width * 0.19;
-    const offsetY = height * 0.19;
-    const startX = width * 2.1;
+    const offsetX = width * 0.17;
+    const offsetY = height * 0.17;
+    const startX = width * 1.9;
     const startY = height * 1.5;
 
     this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
