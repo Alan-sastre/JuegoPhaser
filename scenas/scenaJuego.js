@@ -460,13 +460,13 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale.displaySize;
 
     // Factor de escala reducido para que los botones no sean tan grandes
-    const botonScale = Math.min(width, height) * 0.005;
+    const botonScale = Math.min(width, height) * 0.007;
     const botonDisparoScale = botonScale * 1.6;
 
     // Posiciones para los controles:
     // - Los botones de movimiento se ubicarán en el lado derecho.
     // - El botón de disparo se ubicará en el lado izquierdo.
-    const offsetMovement = width * 0.15 ;
+    const offsetMovement = width * 0.11 ;
     const movementStartX = width * 0.85; // Lado derecho
     const movementStartY = height * 0.85;
 
