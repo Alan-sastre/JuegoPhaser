@@ -15,8 +15,6 @@ class scenaJuego extends Phaser.Scene {
     this.vidaJefeFinal = 1000; // Vida del jefe final
     this.tiempoAtaqueJefe = 900; // Tiempo entre ataques del jefe
     this.jefeFinalVelocidad = 2; // Velocidad de movimiento del jefe final
-
-
   }
 
   preload() {
@@ -46,10 +44,10 @@ class scenaJuego extends Phaser.Scene {
     // Jefe Final
     this.load.image("jefeFinal", "assets/scenaJuego/jefeFinal.png");
     this.load.image("balaJefe", "assets/scenaJuego/bala.png");
-          this.load.audio(
-            "sonidoImpactoJefe",
-            "assets/scenaJuego/sonidoImpactoJefe.mp3"
-          );
+    this.load.audio(
+      "sonidoImpactoJefe",
+      "assets/scenaJuego/sonidoImpactoJefe.mp3"
+    );
   }
 
   create() {
@@ -97,6 +95,9 @@ class scenaJuego extends Phaser.Scene {
   initializeGame() {
     const { width, height } = this.scale.displaySize;
 
+    // Calcular el DPR (Device Pixel Ratio)
+    this.dpr = window.devicePixelRatio || 1; // Si no está disponible, usa 1 como valor predeterminado
+
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
     this.fondo.setScale(
@@ -134,7 +135,6 @@ class scenaJuego extends Phaser.Scene {
     this.estrellas2 = this.add.image(800, 300, "estrellas").setScale(0.2);
     this.GranPlaneta2 = this.add.image(100, 450, "GranPlaneta2").setScale(1);
 
-
     // Sonidos
     this.sonidoDisparo = this.sound.add("sonidoDisparo");
     this.sonidoExplosion = this.sound.add("sonidoExplosion");
@@ -161,8 +161,6 @@ class scenaJuego extends Phaser.Scene {
 
     // Grupo de enemigos
     this.enemigos = this.physics.add.group();
-
-
 
     // Colisiones entre balas y enemigos
     this.physics.add.collider(this.balas, this.enemigos, (bala, enemigo) => {
@@ -289,7 +287,7 @@ class scenaJuego extends Phaser.Scene {
         this.vidaJefeFinal -= 20;
         this.actualizarBarraVidaJefe();
 
-      this.sound.play("sonidoImpactoJefe", {
+        this.sound.play("sonidoImpactoJefe", {
           volume: 1,
           loop: false,
           detune: 0,
@@ -461,7 +459,7 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.min(width, height) * 0.010;
+    const botonScale = Math.min(width, height) * 0.01;
     const botonDisparoScale = botonScale * 2;
 
     const offsetX = width * 0.19;
@@ -811,7 +809,6 @@ class scenaJuego extends Phaser.Scene {
       if (this.score >= 100 && !this.jefeFinalActivo) {
         this.crearJefeFinal();
       }
-
 
       // Mover el jefe final
       if (this.jefeFinal && this.jefeFinal.active && this.jefeFinalActivo) {
