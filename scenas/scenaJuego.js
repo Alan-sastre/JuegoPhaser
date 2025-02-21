@@ -466,9 +466,9 @@ class scenaJuego extends Phaser.Scene {
     // Posiciones para los controles:
     // - Los botones de movimiento se ubicarán en el lado derecho.
     // - El botón de disparo se ubicará en el lado izquierdo.
-    const offsetMovement = width * 0.07;
+    const offsetMovement = width * 0.09;
     const movementStartX = width * 0.85; // Lado derecho
-    const movementStartY = height * 0.8;
+    const movementStartY = height * 0.9;
 
     const shootX = width * 0.15; // Lado izquierdo
     const shootY = height * 0.8;
