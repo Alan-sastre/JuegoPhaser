@@ -459,49 +459,52 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.min(width, height) * 0.01;
-    const botonDisparoScale = botonScale * 2;
+    // Scale for buttons
+    const buttonScale = Math.min(width, height) * 0.0005; // Adjust scaling factor
+    const fireButtonScale = buttonScale * 1.5; // Larger scale for the fire button
 
-    const offsetX = width * 0.19;
-    const offsetY = height * 0.19;
-    const startX = width * 2;
-    const startY = height * 1.3;
+    // Positions for movement buttons (directional pad)
+    const padX = width * 0.1; // 10% from the left edge
+    const padY = height * 0.8; // 80% from the top edge
+    const buttonSpacing = width * 0.05; // Spacing between buttons
 
-    this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
+    // Positions for the fire button
+    const fireButtonX = width * 0.9; // 90% from the left edge
+    const fireButtonY = height * 0.8; // 80% from the top edge
 
-    // Botones de movimiento
+    // Add directional pad buttons
     this.botonArriba = this.add
-      .image(startX + offsetX, startY - offsetY, "botonArriba")
+      .image(padX, padY - buttonSpacing, "botonArriba")
       .setInteractive()
-      .setScale(botonScale)
+      .setScale(buttonScale)
       .setDepth(10);
 
     this.botonAbajo = this.add
-      .image(startX + offsetX, startY + offsetY, "botonAbajo")
+      .image(padX, padY + buttonSpacing, "botonAbajo")
       .setInteractive()
-      .setScale(botonScale)
+      .setScale(buttonScale)
       .setDepth(10);
 
     this.botonIzquierda = this.add
-      .image(startX, startY, "botonIzquierda")
+      .image(padX - buttonSpacing, padY, "botonIzquierda")
       .setInteractive()
-      .setScale(botonScale)
+      .setScale(buttonScale)
       .setDepth(10);
 
     this.botonDerecha = this.add
-      .image(startX + offsetX * 2, startY, "botonDerecha")
+      .image(padX + buttonSpacing, padY, "botonDerecha")
       .setInteractive()
-      .setScale(botonScale)
+      .setScale(buttonScale)
       .setDepth(10);
 
-    // Botón de disparo
+    // Add fire button
     this.botonDisparo = this.add
-      .image(width * 0.17, height * 1.5, "botonDisparo")
+      .image(fireButtonX, fireButtonY, "botonDisparo")
       .setInteractive()
-      .setScale(botonDisparoScale)
+      .setScale(fireButtonScale)
       .setDepth(10);
 
-    // Movimiento vertical
+    // Movement controls
     this.botonArriba.on("pointerdown", () => {
       this.nave.setVelocityY(-200);
     });
@@ -534,7 +537,6 @@ class scenaJuego extends Phaser.Scene {
       }
     });
 
-    // Movimiento horizontal
     this.botonIzquierda.on("pointerdown", () => {
       this.nave.setVelocityX(-200);
     });
@@ -567,7 +569,7 @@ class scenaJuego extends Phaser.Scene {
       }
     });
 
-    // Control de disparo
+    // Fire button controls
     let disparoActivo = false;
 
     this.botonDisparo.on("pointerdown", () => {
@@ -581,7 +583,7 @@ class scenaJuego extends Phaser.Scene {
         },
         loop: true,
       });
-      // Disparo inicial
+      // Initial shot
       this.disparar();
     });
 
