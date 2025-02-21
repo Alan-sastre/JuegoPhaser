@@ -459,79 +459,82 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    // Ajusta el factor de escala para que los botones sean más pequeños.
-    // Puedes modificar el valor 0.0008 según el tamaño deseado.
-    const botonScale = Math.min(width, height) * 0.0008;
-    const botonDisparoScale = botonScale * 1.2;
+    // Ajusta el factor de escala para que los botones tengan un tamaño adecuado.
+    const botonScale = Math.min(width, height) * 0.05; // Puedes modificar este valor para agrandar o reducir los botones
+    const botonDisparoScale = botonScale * 1.5;
 
-    // Posiciones para los controles
-    const offsetX = width * 0.1;
-    const offsetY = height * 0.1;
-    const startX = width * 0.15;
-    const startY = height * 0.8;
+    // Posiciones para los controles de movimiento (lado izquierdo)
+    const movementStartX = width * 0.15;
+    const movementStartY = height * 0.8;
+    // Define un offset para separar los botones en el layout en cruz.
+    const offsetMovement = width * 0.07;
+
+    // Posición para el botón de disparo (lado derecho)
+    const shootX = width * 0.85;
+    const shootY = height * 0.8;
 
     this.input.addPointer(3); // Permitir hasta 3 toques simultáneos
 
     // Botones de movimiento
     this.botonArriba = this.add
-      .image(startX, startY - offsetY, "botonArriba")
+      .image(movementStartX, movementStartY - offsetMovement, "botonArriba")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
     this.botonAbajo = this.add
-      .image(startX, startY + offsetY, "botonAbajo")
+      .image(movementStartX, movementStartY + offsetMovement, "botonAbajo")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
     this.botonIzquierda = this.add
-      .image(startX - offsetX, startY, "botonIzquierda")
+      .image(movementStartX - offsetMovement, movementStartY, "botonIzquierda")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
     this.botonDerecha = this.add
-      .image(startX + offsetX, startY, "botonDerecha")
+      .image(movementStartX + offsetMovement, movementStartY, "botonDerecha")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo, ubicado en la parte inferior derecha
+    // Botón de disparo (lado derecho)
     this.botonDisparo = this.add
-      .image(width * 0.85, height * 0.8, "botonDisparo")
+      .image(shootX, shootY, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
 
-    // Movimiento vertical
+    // Eventos para movimiento vertical
     this.botonArriba.on("pointerdown", () => {
       this.nave.setVelocityY(-200);
     });
     this.botonArriba.on("pointerup", () => {
-      this.nave.setVelocityY(0);
+      if (this.nave.body.velocity.y < 0) this.nave.setVelocityY(0);
     });
 
     this.botonAbajo.on("pointerdown", () => {
       this.nave.setVelocityY(200);
     });
     this.botonAbajo.on("pointerup", () => {
-      this.nave.setVelocityY(0);
+      if (this.nave.body.velocity.y > 0) this.nave.setVelocityY(0);
     });
 
-    // Movimiento horizontal
+    // Eventos para movimiento horizontal
     this.botonIzquierda.on("pointerdown", () => {
       this.nave.setVelocityX(-200);
     });
     this.botonIzquierda.on("pointerup", () => {
-      this.nave.setVelocityX(0);
+      if (this.nave.body.velocity.x < 0) this.nave.setVelocityX(0);
     });
 
     this.botonDerecha.on("pointerdown", () => {
       this.nave.setVelocityX(200);
     });
     this.botonDerecha.on("pointerup", () => {
-      this.nave.setVelocityX(0);
+      if (this.nave.body.velocity.x > 0) this.nave.setVelocityX(0);
     });
 
     // Control de disparo
