@@ -459,25 +459,27 @@ class scenaJuego extends Phaser.Scene {
   addMobileControls() {
     const { width, height } = this.scale.displaySize;
 
-    const botonScale = Math.max(50, Math.min(width, height) * 0.05); // Escala de botones ajustada
-    const botonDisparoScale = botonScale * 2;
+    // Ajustar escala mínima para asegurar que los botones sean visibles en todas las pantallas
+    const botonScale = Math.max(50, Math.min(width, height) * 0.05);
+    const botonDisparoScale = botonScale * 1.5;
 
-    const offsetX = width * 0.1; // Ajuste de offset
-    const offsetY = height * 0.1; // Ajuste de offset
-    const startX = width * 0.1; // Nueva posición de inicio
-    const startY = height * 0.8; // Nueva posición de inicio para los controles de movimiento
+    // Posiciones más adecuadas para los controles
+    const offsetX = width * 0.1;
+    const offsetY = height * 0.1;
+    const startX = width * 0.15;
+    const startY = height * 0.8;
 
-    this.input.addPointer(3); // Permite hasta 3 puntos de toque simultáneos
+    this.input.addPointer(3); // Permitir hasta 3 toques simultáneos
 
     // Botones de movimiento
     this.botonArriba = this.add
-      .image(startX + offsetX, startY - offsetY, "botonArriba")
+      .image(startX, startY - offsetY, "botonArriba")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
     this.botonAbajo = this.add
-      .image(startX + offsetX, startY + offsetY, "botonAbajo")
+      .image(startX, startY + offsetY, "botonAbajo")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
@@ -489,83 +491,51 @@ class scenaJuego extends Phaser.Scene {
       .setDepth(10);
 
     this.botonDerecha = this.add
-      .image(startX + offsetX * 2, startY, "botonDerecha")
+      .image(startX + offsetX, startY, "botonDerecha")
       .setInteractive()
       .setScale(botonScale)
       .setDepth(10);
 
-    // Botón de disparo
+    // Botón de disparo, ubicado en la parte derecha inferior
     this.botonDisparo = this.add
-      .image(width * 0.85, height * 0.85, "botonDisparo")
+      .image(width * 0.85, height * 0.8, "botonDisparo")
       .setInteractive()
       .setScale(botonDisparoScale)
       .setDepth(10);
 
     // Movimiento vertical
-    this.botonArriba.on("pointerdown", () => {
-      this.nave.setVelocityY(-200);
-    });
-
-    this.botonArriba.on("pointerout", () => {
-      if (this.nave.body.velocity.y < 0) {
+    this.botonArriba
+      .on("pointerdown", () => {
+        this.nave.setVelocityY(-200);
+      })
+      .on("pointerup", () => {
         this.nave.setVelocityY(0);
-      }
-    });
+      });
 
-    this.botonArriba.on("pointerup", () => {
-      if (this.nave.body.velocity.y < 0) {
+    this.botonAbajo
+      .on("pointerdown", () => {
+        this.nave.setVelocityY(200);
+      })
+      .on("pointerup", () => {
         this.nave.setVelocityY(0);
-      }
-    });
-
-    this.botonAbajo.on("pointerdown", () => {
-      this.nave.setVelocityY(200);
-    });
-
-    this.botonAbajo.on("pointerout", () => {
-      if (this.nave.body.velocity.y > 0) {
-        this.nave.setVelocityY(0);
-      }
-    });
-
-    this.botonAbajo.on("pointerup", () => {
-      if (this.nave.body.velocity.y > 0) {
-        this.nave.setVelocityY(0);
-      }
-    });
+      });
 
     // Movimiento horizontal
-    this.botonIzquierda.on("pointerdown", () => {
-      this.nave.setVelocityX(-200);
-    });
-
-    this.botonIzquierda.on("pointerout", () => {
-      if (this.nave.body.velocity.x < 0) {
+    this.botonIzquierda
+      .on("pointerdown", () => {
+        this.nave.setVelocityX(-200);
+      })
+      .on("pointerup", () => {
         this.nave.setVelocityX(0);
-      }
-    });
+      });
 
-    this.botonIzquierda.on("pointerup", () => {
-      if (this.nave.body.velocity.x < 0) {
+    this.botonDerecha
+      .on("pointerdown", () => {
+        this.nave.setVelocityX(200);
+      })
+      .on("pointerup", () => {
         this.nave.setVelocityX(0);
-      }
-    });
-
-    this.botonDerecha.on("pointerdown", () => {
-      this.nave.setVelocityX(200);
-    });
-
-    this.botonDerecha.on("pointerout", () => {
-      if (this.nave.body.velocity.x > 0) {
-        this.nave.setVelocityX(0);
-      }
-    });
-
-    this.botonDerecha.on("pointerup", () => {
-      if (this.nave.body.velocity.x > 0) {
-        this.nave.setVelocityX(0);
-      }
-    });
+      });
 
     // Control de disparo
     let disparoActivo = false;
@@ -575,28 +545,16 @@ class scenaJuego extends Phaser.Scene {
       this.disparoInterval = this.time.addEvent({
         delay: this.tiempoEsperaDisparo,
         callback: () => {
-          if (disparoActivo) {
-            this.disparar();
-          }
+          if (disparoActivo) this.disparar();
         },
         loop: true,
       });
-      // Disparo inicial
       this.disparar();
     });
 
     this.botonDisparo.on("pointerup", () => {
       disparoActivo = false;
-      if (this.disparoInterval) {
-        this.disparoInterval.remove();
-      }
-    });
-
-    this.botonDisparo.on("pointerout", () => {
-      disparoActivo = false;
-      if (this.disparoInterval) {
-        this.disparoInterval.remove();
-      }
+      if (this.disparoInterval) this.disparoInterval.remove();
     });
   }
 
