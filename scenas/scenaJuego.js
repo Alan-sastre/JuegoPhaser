@@ -15,6 +15,11 @@ class scenaJuego extends Phaser.Scene {
     this.vidaJefeFinal = 1000; // Vida del jefe final
     this.tiempoAtaqueJefe = 900; // Tiempo entre ataques del jefe
     this.jefeFinalVelocidad = 2; // Velocidad de movimiento del jefe final
+    this.joystick = null; // Referencia al joystick
+    this.isTouching = false; // Estado del toque
+    this.touchPosition = { x: 0, y: 0 }; // Posición del toque
+    this.joystickBase = null; // Base del joystick
+    this.joystickThumb = null; // Parte móvil del joystick
   }
 
   preload() {
@@ -65,7 +70,9 @@ class scenaJuego extends Phaser.Scene {
     this.time.delayedCall(1, () => {
       this.initializeGame();
     });
-
+    if (this.isMobile) {
+      this.createJoystick();
+    }
     // Crear la nave
     this.nave = this.physics.add.sprite(200, 300, "nave").setScale(0.3);
     this.nave.setCollideWorldBounds(true);
@@ -456,112 +463,84 @@ class scenaJuego extends Phaser.Scene {
     });
   }
 
-  addMobileControls() {
+  createJoystick() {
     const { width, height } = this.scale.displaySize;
 
-    // Factor de escala reducido para que los botones no sean tan grandes
-    const botonScale = Math.min(width, height) * 0.007;
-    const botonDisparoScale = botonScale * 1.8;
+    // Crear la base del joystick
+    this.joystickBase = this.add
+      .circle(width * 0.15, height * 0.85, 50, 0x888888, 0.5)
+      .setDepth(10)
+      .setInteractive();
 
-    // Posiciones para los controles:
-    // - Los botones de movimiento se ubicarán en el lado derecho.
-    // - El botón de disparo se ubicará en el lado izquierdo.
-    const offsetMovement = width * 0.11 ;
-    const movementStartX = width * 1.2; // Lado derecho
-    const movementStartY = height * 1.1;
-
-    const shootX = width * 0.14; // Lado izquierdo
-    const shootY = height * 1.1;
-
-    this.input.addPointer(3); // Permite hasta 3 toques simultáneos
-
-    // Botones de movimiento (lado derecho)
-    this.botonArriba = this.add
-      .image(movementStartX, movementStartY - offsetMovement, "botonArriba")
-      .setInteractive()
-      .setScale(botonScale)
+    // Crear la parte móvil del joystick
+    this.joystickThumb = this.add
+      .circle(width * 0.15, height * 0.85, 25, 0xcccccc, 0.8)
       .setDepth(10);
 
-    this.botonAbajo = this.add
-      .image(movementStartX, movementStartY + offsetMovement, "botonAbajo")
-      .setInteractive()
-      .setScale(botonScale)
-      .setDepth(10);
-
-    this.botonIzquierda = this.add
-      .image(movementStartX - offsetMovement, movementStartY, "botonIzquierda")
-      .setInteractive()
-      .setScale(botonScale)
-      .setDepth(10);
-
-    this.botonDerecha = this.add
-      .image(movementStartX + offsetMovement, movementStartY, "botonDerecha")
-      .setInteractive()
-      .setScale(botonScale)
-      .setDepth(10);
-
-    // Botón de disparo (lado izquierdo)
-    this.botonDisparo = this.add
-      .image(shootX, shootY, "botonDisparo")
-      .setInteractive()
-      .setScale(botonDisparoScale)
-      .setDepth(10);
-
-    // Eventos para movimiento vertical
-    this.botonArriba.on("pointerdown", () => {
-      this.nave.setVelocityY(-200);
-    });
-    this.botonArriba.on("pointerup", () => {
-      if (this.nave.body.velocity.y < 0) this.nave.setVelocityY(0);
+    // Eventos táctiles
+    this.input.on("pointerdown", (pointer) => {
+      if (this.isPointerOverJoystick(pointer)) {
+        this.isTouching = true;
+        this.touchPosition = { x: pointer.x, y: pointer.y };
+      }
     });
 
-    this.botonAbajo.on("pointerdown", () => {
-      this.nave.setVelocityY(200);
-    });
-    this.botonAbajo.on("pointerup", () => {
-      if (this.nave.body.velocity.y > 0) this.nave.setVelocityY(0);
-    });
-
-    // Eventos para movimiento horizontal
-    this.botonIzquierda.on("pointerdown", () => {
-      this.nave.setVelocityX(-200);
-    });
-    this.botonIzquierda.on("pointerup", () => {
-      if (this.nave.body.velocity.x < 0) this.nave.setVelocityX(0);
+    this.input.on("pointermove", (pointer) => {
+      if (this.isTouching) {
+        this.touchPosition = { x: pointer.x, y: pointer.y };
+        this.updateJoystick();
+      }
     });
 
-    this.botonDerecha.on("pointerdown", () => {
-      this.nave.setVelocityX(200);
+    this.input.on("pointerup", () => {
+      this.isTouching = false;
+      this.resetJoystick();
     });
-    this.botonDerecha.on("pointerup", () => {
-      if (this.nave.body.velocity.x > 0) this.nave.setVelocityX(0);
-    });
+  }
 
-    // Control de disparo
-    let disparoActivo = false;
+  isPointerOverJoystick(pointer) {
+    const distance = Phaser.Math.Distance.Between(
+      pointer.x,
+      pointer.y,
+      this.joystickBase.x,
+      this.joystickBase.y
+    );
+    return distance <= this.joystickBase.radius;
+  }
 
-    this.botonDisparo.on("pointerdown", () => {
-      disparoActivo = true;
-      this.disparoInterval = this.time.addEvent({
-        delay: this.tiempoEsperaDisparo,
-        callback: () => {
-          if (disparoActivo) this.disparar();
-        },
-        loop: true,
-      });
-      // Disparo inicial
-      this.disparar();
-    });
+  updateJoystick() {
+    const { x, y } = this.touchPosition;
+    const baseX = this.joystickBase.x;
+    const baseY = this.joystickBase.y;
 
-    this.botonDisparo.on("pointerup", () => {
-      disparoActivo = false;
-      if (this.disparoInterval) this.disparoInterval.remove();
-    });
+    // Calcular la distancia entre el toque y la base del joystick
+    const angle = Phaser.Math.Angle.Between(baseX, baseY, x, y);
+    const distance = Phaser.Math.Distance.Between(baseX, baseY, x, y);
 
-    this.botonDisparo.on("pointerout", () => {
-      disparoActivo = false;
-      if (this.disparoInterval) this.disparoInterval.remove();
-    });
+    // Limitar la distancia máxima del joystick
+    const maxDistance = this.joystickBase.radius;
+    const clampedDistance = Phaser.Math.Clamp(distance, 0, maxDistance);
+
+    // Mover la parte móvil del joystick
+    this.joystickThumb.x = baseX + Math.cos(angle) * clampedDistance;
+    this.joystickThumb.y = baseY + Math.sin(angle) * clampedDistance;
+
+    // Calcular la fuerza del joystick (normalizada entre 0 y 1)
+    const forceX = (this.joystickThumb.x - baseX) / maxDistance;
+    const forceY = (this.joystickThumb.y - baseY) / maxDistance;
+
+    // Mover la nave
+    const speed = 200;
+    this.nave.setVelocity(forceX * speed, forceY * speed);
+  }
+
+  resetJoystick() {
+    // Restablecer la posición del joystick
+    this.joystickThumb.x = this.joystickBase.x;
+    this.joystickThumb.y = this.joystickBase.y;
+
+    // Detener el movimiento de la nave
+    this.nave.setVelocity(0, 0);
   }
 
   actualizarBarraVida() {
