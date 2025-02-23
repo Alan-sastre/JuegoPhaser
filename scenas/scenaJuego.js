@@ -71,38 +71,13 @@ class scenaJuego extends Phaser.Scene {
     this.time.delayedCall(1, () => {
       this.initializeGame();
     });
-    if (this.isMobile) {
-      this.createJoystick();
-    }
-    // Crear la nave
-    this.nave = this.physics.add.sprite(200, 300, "nave").setScale(0.3);
-    this.nave.setCollideWorldBounds(true);
-
-    // Ajustar el tamaño del cuerpo físico de la nave
-    this.nave.setSize(40, 40).setOffset(10, 10);
-
-    this.nave.setOffset(this.nave.width * 0.25, this.nave.height * 0.25);
-
-    // Crear el grupo de balas del jefe
-    this.balasJefe = this.physics.add.group({
-      defaultKey: "balaJefe",
-      maxSize: 30,
-      allowGravity: false,
-    });
-
-    if (this.isMobile) {
-      // Eliminar controles existentes si los hay
-      this.removeExistingControls();
-      // Recrear los controles con las nuevas dimensiones
-      this.addMobileControls();
-    }
   }
 
   initializeGame() {
     const { width, height } = this.scale.displaySize;
 
     // Calcular el DPR (Device Pixel Ratio)
-    this.dpr = window.devicePixelRatio || 1; // Si no está disponible, usa 1 como valor predeterminado
+    this.dpr = window.devicePixelRatio || 1;
 
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
@@ -113,19 +88,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Añadir barra de vida del jefe final
     this.barraVidaJefe = this.add.graphics();
-    this.barraVidaJefe.setVisible(false); // Inicialmente oculta
-
-    // Ajustar el fondo para que ocupe toda la pantalla
-    this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
-    this.fondo.setScale(
-      this.scale.width / this.fondo.width,
-      this.scale.height / this.fondo.height
-    );
-
-    const nivel1Image = this.add
-      .image(900, 20, "nivel")
-      .setScale(0.2)
-      .setDepth(10);
+    this.barraVidaJefe.setVisible(false);
 
     // Añadir elementos del juego
     let scaleFactor = this.scale.width > 800 ? 0.5 : 0.3;
@@ -225,10 +188,8 @@ class scenaJuego extends Phaser.Scene {
 
     // Controles táctiles (solo para móviles)
     if (this.isMobile) {
-      // Esperar un pequeño momento para asegurarse de que las dimensiones estén estables
-      this.time.delayedCall(100, () => {
-        this.addMobileControls();
-      });
+      this.createJoystick();
+      this.createBotonDisparo();
     }
   }
 
@@ -559,9 +520,9 @@ class scenaJuego extends Phaser.Scene {
   }
 
   actualizarBarraVida() {
-    this.barraVida.clear(); // Limpiar la barra de vida anterior
-    this.barraVida.fillStyle(0xff0000, 1); // Color rojo
-    this.barraVida.fillRect(16, 60, this.vida, 20); // Dibujar la barra de vida
+    this.barraVida.clear();
+    this.barraVida.fillStyle(0xff0000, 1);
+    this.barraVida.fillRect(16, 60, this.vida, 20);
   }
 
   gameOver() {
