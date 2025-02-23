@@ -428,7 +428,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Crear la base del joystick
     this.joystickBase = this.add
-      .circle(width * 0.15, height * 0.85, 50, 0x888888, 0.5)
+      .circle(width * 0.85, height * 0.85, 50, 0x888888, 0.5)
       .setDepth(10)
       .setInteractive();
 
@@ -462,11 +462,10 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale.displaySize;
 
     // Crear el botón de disparo
-    this.botonDisparo = this.add
-      .image(width * 0.85, height * 0.85, "botonDisparo")
-      .setInteractive()
-      .setScale(0.5)
-      .setDepth(10);
+    this.joystickBase = this.add
+      .circle(width * 0.85, height * 0.85, 50, 0x888888, 0.5)
+      .setDepth(10)
+      .setInteractive();
 
     // Evento para disparar cuando se presiona el botón
     this.botonDisparo.on("pointerdown", () => {
