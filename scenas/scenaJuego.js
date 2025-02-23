@@ -20,6 +20,7 @@ class scenaJuego extends Phaser.Scene {
     this.touchPosition = { x: 0, y: 0 }; // Posición del toque
     this.joystickBase = null; // Base del joystick
     this.joystickThumb = null; // Parte móvil del joystick
+    this.botonDisparo = null; // Nuevo: Referencia al botón de disparo
   }
 
   preload() {
@@ -88,9 +89,7 @@ class scenaJuego extends Phaser.Scene {
       maxSize: 30,
       allowGravity: false,
     });
-  }
 
-  resize() {
     if (this.isMobile) {
       // Eliminar controles existentes si los hay
       this.removeExistingControls();
@@ -495,6 +494,22 @@ class scenaJuego extends Phaser.Scene {
     this.input.on("pointerup", () => {
       this.isTouching = false;
       this.resetJoystick();
+    });
+  }
+
+  createBotonDisparo() {
+    const { width, height } = this.scale.displaySize;
+
+    // Crear el botón de disparo
+    this.botonDisparo = this.add
+      .image(width * 0.85, height * 0.85, "botonDisparo")
+      .setInteractive()
+      .setScale(0.5)
+      .setDepth(10);
+
+    // Evento para disparar cuando se presiona el botón
+    this.botonDisparo.on("pointerdown", () => {
+      this.disparar();
     });
   }
 
