@@ -496,14 +496,12 @@ class scenaJuego extends Phaser.Scene {
 
     // Eventos para el botón de disparo con un ID separado
     this.botonDisparo.on("pointerdown", (pointer) => {
-      pointer.event.stopPropagation();
       this.disparoPointerId = pointer.id;
       this.disparoAutomatico = true;
     });
 
     this.botonDisparo.on("pointerup", (pointer) => {
       if (pointer.id === this.disparoPointerId) {
-        pointer.event.stopPropagation();
         this.disparoAutomatico = false;
         this.disparoPointerId = null;
       }
@@ -511,7 +509,6 @@ class scenaJuego extends Phaser.Scene {
 
     this.botonDisparo.on("pointerout", (pointer) => {
       if (pointer.id === this.disparoPointerId) {
-        pointer.event.stopPropagation();
         this.disparoAutomatico = false;
         this.disparoPointerId = null;
       }
@@ -770,71 +767,71 @@ class scenaJuego extends Phaser.Scene {
   }
 
   update() {
-   if (!this.isGameOver && !this.physics.world.isPaused) {
-     // Disparar automáticamente si el botón de disparo está presionado
-     if (this.disparoAutomatico) {
-       this.disparar();
-     }
+    if (!this.isGameOver && !this.physics.world.isPaused) {
+      // Disparar automáticamente si el botón de disparo está presionado
+      if (this.disparoAutomatico) {
+        this.disparar();
+      }
 
-     // Verificar si se alcanzó la puntuación para el jefe final
-     if (this.score >= 100 && !this.jefeFinalActivo) {
-       this.crearJefeFinal();
-     }
+      // Verificar si se alcanzó la puntuación para el jefe final
+      if (this.score >= 100 && !this.jefeFinalActivo) {
+        this.crearJefeFinal();
+      }
 
-     // Mover el jefe final
-     if (this.jefeFinal && this.jefeFinal.active && this.jefeFinalActivo) {
-       // Cambiar la dirección cuando llega a los límites
-       if (this.jefeFinal.y <= 100) {
-         this.jefeFinal.setVelocityY(150);
-       } else if (this.jefeFinal.y >= this.scale.height - 100) {
-         this.jefeFinal.setVelocityY(-150);
-       }
+      // Mover el jefe final
+      if (this.jefeFinal && this.jefeFinal.active && this.jefeFinalActivo) {
+        // Cambiar la dirección cuando llega a los límites
+        if (this.jefeFinal.y <= 100) {
+          this.jefeFinal.setVelocityY(150);
+        } else if (this.jefeFinal.y >= this.scale.height - 100) {
+          this.jefeFinal.setVelocityY(-150);
+        }
 
-       // Actualizar la barra de vida del jefe
-       if (this.barraVidaJefe) {
-         this.actualizarBarraVidaJefe();
-       }
-     }
+        // Actualizar la barra de vida del jefe
+        if (this.barraVidaJefe) {
+          this.actualizarBarraVidaJefe();
+        }
+      }
 
-     // Limpiar balas fuera de pantalla
-     if (this.balasJefe && this.balasJefe.children) {
-       this.balasJefe.children.each((bala) => {
-         if (bala.active) {
-           if (
-             bala.x < -50 ||
-             bala.x > this.scale.width + 50 ||
-             bala.y < -50 ||
-             bala.y > this.scale.height + 50
-           ) {
-             bala.destroy();
-           }
-         }
-       });
-     }
+      // Limpiar balas fuera de pantalla
+      if (this.balasJefe && this.balasJefe.children) {
+        this.balasJefe.children.each((bala) => {
+          if (bala.active) {
+            if (
+              bala.x < -50 ||
+              bala.x > this.scale.width + 50 ||
+              bala.y < -50 ||
+              bala.y > this.scale.height + 50
+            ) {
+              bala.destroy();
+            }
+          }
+        });
+      }
 
-     // Movimiento de los elementos en pantalla
-     this.GranPlaneta.x -= 0.03;
-     this.planetas.x -= 1;
-     this.planetas2.x -= 1;
-     this.estrellas.x -= 1;
-     this.estrellas1.x -= 1;
-     this.estrellas2.x -= 1;
+      // Movimiento de los elementos en pantalla
+      this.GranPlaneta.x -= 0.03;
+      this.planetas.x -= 1;
+      this.planetas2.x -= 1;
+      this.estrellas.x -= 1;
+      this.estrellas1.x -= 1;
+      this.estrellas2.x -= 1;
 
-     // Reiniciar posición de los elementos cuando salen de la pantalla
-     if (this.planetas.x < -50) this.planetas.x = 850;
-     if (this.planetas2.x < -50) this.planetas2.x = 850;
-     if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
-     if (this.estrellas.x < -50) this.estrellas.x = 850;
-     if (this.estrellas1.x < -50) this.estrellas1.x = 850;
-     if (this.estrellas2.x < -50) this.estrellas2.x = 850;
+      // Reiniciar posición de los elementos cuando salen de la pantalla
+      if (this.planetas.x < -50) this.planetas.x = 850;
+      if (this.planetas2.x < -50) this.planetas2.x = 850;
+      if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
+      if (this.estrellas.x < -50) this.estrellas.x = 850;
+      if (this.estrellas1.x < -50) this.estrellas1.x = 850;
+      if (this.estrellas2.x < -50) this.estrellas2.x = 850;
 
-     // Eliminar balas fuera de pantalla
-     this.balas.children.each((bala) => {
-       if (bala.active && bala.x > this.scale.width) {
-         bala.setActive(false);
-         bala.setVisible(false);
-       }
-     });
-   }
+      // Eliminar balas fuera de pantalla
+      this.balas.children.each((bala) => {
+        if (bala.active && bala.x > this.scale.width) {
+          bala.setActive(false);
+          bala.setVisible(false);
+        }
+      });
+    }
   }
 }
