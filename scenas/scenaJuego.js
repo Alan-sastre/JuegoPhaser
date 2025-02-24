@@ -488,7 +488,7 @@ class scenaJuego extends Phaser.Scene {
     this.botonDisparo = this.add
       .image(width * 0.15, height * 0.75, "botonDisparo")
       .setInteractive()
-      .setScale(1.5)
+      .setScale(5)
       .setDepth(1000)
       .setScrollFactor(0)
       .setAlpha(0.8);
