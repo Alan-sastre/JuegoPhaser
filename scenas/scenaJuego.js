@@ -829,4 +829,3 @@ class scenaJuego extends Phaser.Scene {
       });
     }
   }
-}
