@@ -445,88 +445,56 @@ class scenaJuego extends Phaser.Scene {
   createJoystick() {
     const { width, height } = this.scale;
 
-    // Crear la base del joystick (lado derecho)
     this.joystickBase = this.add
       .circle(width * 0.85, height * 0.75, 50, 0x888888, 0.5)
       .setDepth(1000)
       .setScrollFactor(0)
       .setInteractive();
 
-    // Crear la parte móvil del joystick
     this.joystickThumb = this.add
       .circle(width * 0.85, height * 0.75, 25, 0xcccccc, 0.8)
       .setDepth(1000)
       .setScrollFactor(0);
 
-    // Configurar múltiples toques
-    this.input.addPointer(2);
+    // Configurar el input para múltiples toques
+    this.input.addPointer(2); // Permite hasta 3 toques simultáneos (2 + 1 por defecto)
 
-    // Eventos táctiles para el joystick
     this.joystickBase.on("pointerdown", (pointer) => {
-      if (!this.joystickPointerId) {
-        this.joystickPointerId = pointer.id;
+      if (this.isPointerOverJoystick(pointer)) {
         this.isTouching = true;
-        this.updateJoystickMovement(pointer);
+        this.joystickPointerId = pointer.id;
+        this.activePointers.add(pointer.id);
+        this.touchPosition = { x: pointer.x, y: pointer.y };
       }
     });
 
     this.input.on("pointermove", (pointer) => {
-      if (pointer.id === this.joystickPointerId) {
-        this.updateJoystickMovement(pointer);
+      if (
+        this.activePointers.has(pointer.id) &&
+        pointer.id === this.joystickPointerId
+      ) {
+        this.touchPosition = { x: pointer.x, y: pointer.y };
+        this.updateJoystick();
       }
     });
 
     this.input.on("pointerup", (pointer) => {
       if (pointer.id === this.joystickPointerId) {
-        this.joystickPointerId = null;
         this.isTouching = false;
+        this.joystickPointerId = null;
+        this.activePointers.delete(pointer.id);
         this.resetJoystick();
       }
     });
 
     this.input.on("pointerout", (pointer) => {
       if (pointer.id === this.joystickPointerId) {
-        this.joystickPointerId = null;
         this.isTouching = false;
+        this.joystickPointerId = null;
+        this.activePointers.delete(pointer.id);
         this.resetJoystick();
       }
     });
-  }
-  updateJoystickMovement(pointer) {
-    const distance = Phaser.Math.Distance.Between(
-      pointer.x,
-      pointer.y,
-      this.joystickBase.x,
-      this.joystickBase.y
-    );
-
-    const maxDistance = this.joystickBase.radius;
-    const angle = Phaser.Math.Angle.Between(
-      this.joystickBase.x,
-      this.joystickBase.y,
-      pointer.x,
-      pointer.y
-    );
-
-    if (distance <= maxDistance) {
-      // Si está dentro del radio, mover directamente a la posición del puntero
-      this.joystickThumb.x = pointer.x;
-      this.joystickThumb.y = pointer.y;
-    } else {
-      // Si está fuera del radio, mantener en el borde del círculo
-      this.joystickThumb.x =
-        this.joystickBase.x + Math.cos(angle) * maxDistance;
-      this.joystickThumb.y =
-        this.joystickBase.y + Math.sin(angle) * maxDistance;
-    }
-
-    // Calcular velocidad basada en la posición del joystick
-    const forceX = (this.joystickThumb.x - this.joystickBase.x) / maxDistance;
-    const forceY = (this.joystickThumb.y - this.joystickBase.y) / maxDistance;
-
-    // Aplicar velocidad a la nave
-    const speed = 200;
-    this.nave.setVelocity(forceX * speed, forceY * speed);
   }
 
   createBotonDisparo() {
@@ -542,13 +510,17 @@ class scenaJuego extends Phaser.Scene {
 
     this.botonDisparo.on("pointerdown", (pointer) => {
       this.disparoPointerId = pointer.id;
+      this.activePointers.add(pointer.id);
       this.disparoAutomatico = true;
+      pointer.event.stopPropagation();
     });
 
     this.botonDisparo.on("pointerup", (pointer) => {
       if (pointer.id === this.disparoPointerId) {
         this.disparoAutomatico = false;
         this.disparoPointerId = null;
+        this.activePointers.delete(pointer.id);
+        pointer.event.stopPropagation();
       }
     });
 
@@ -556,6 +528,8 @@ class scenaJuego extends Phaser.Scene {
       if (pointer.id === this.disparoPointerId) {
         this.disparoAutomatico = false;
         this.disparoPointerId = null;
+        this.activePointers.delete(pointer.id);
+        pointer.event.stopPropagation();
       }
     });
   }
@@ -593,8 +567,11 @@ class scenaJuego extends Phaser.Scene {
   }
 
   resetJoystick() {
+    // Restablecer la posición del joystick
     this.joystickThumb.x = this.joystickBase.x;
     this.joystickThumb.y = this.joystickBase.y;
+
+    // Detener el movimiento de la nave
     this.nave.setVelocity(0, 0);
   }
 
