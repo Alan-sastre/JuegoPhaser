@@ -253,12 +253,43 @@ class scenaJuego extends Phaser.Scene {
         this
       );
 
+      // Configurar colisiones entre balas del jugador y el jefe final
+      this.physics.add.collider(
+        this.balas,
+        this.jefeFinal,
+        (jefe, bala) => {
+          bala.destroy();
+          this.vidaJefeFinal -= 20;
+          this.actualizarBarraVidaJefe();
+
+          this.sound.play("sonidoImpactoJefe", {
+            volume: 1,
+            loop: false,
+            detune: 0,
+          });
+
+          // Efecto visual de daño
+          this.jefeFinal.setTint(0xff0000);
+          this.time.delayedCall(100, () => {
+            if (this.jefeFinal && this.jefeFinal.active) {
+              this.jefeFinal.clearTint();
+            }
+          });
+
+          if (this.vidaJefeFinal <= 0) {
+            this.derrotarJefeFinal();
+          }
+        },
+        null,
+        this
+      );
+
       // Mostrar barra de vida del jefe
       this.barraVidaJefe = this.add.graphics();
-      this.barraVidaJefe.setVisible(true); // Hacer visible la barra de vida
-      this.actualizarBarraVidaJefe(); // Dibujar la barra de vida
+      this.barraVidaJefe.setVisible(true);
+      this.actualizarBarraVidaJefe();
 
-      // Iniciar patrón de ataque del jefe con un temporizador controlado
+      // Iniciar patrón de ataque del jefe
       if (this.timerAtaqueJefe) {
         this.timerAtaqueJefe.remove();
         this.timerAtaqueJefe = null;
@@ -270,30 +301,6 @@ class scenaJuego extends Phaser.Scene {
         callbackScope: this,
         loop: true,
       });
-      // Colisión entre balas y jefe final
-      this.physics.add.collider(this.balas, this.jefeFinal, (jefe, bala) => {
-        bala.destroy();
-        this.vidaJefeFinal -= 20;
-        this.actualizarBarraVidaJefe();
-
-        this.sound.play("sonidoImpactoJefe", {
-          volume: 1,
-          loop: false,
-          detune: 0,
-        });
-
-        // Efecto visual de daño
-        this.jefeFinal.setTint(0xff0000);
-        this.time.delayedCall(100, () => {
-          if (this.jefeFinal && this.jefeFinal.active) {
-            this.jefeFinal.clearTint();
-          }
-        });
-
-        if (this.vidaJefeFinal <= 0) {
-          this.derrotarJefeFinal();
-        }
-      });
     }
   }
 
@@ -304,17 +311,17 @@ class scenaJuego extends Phaser.Scene {
     this.barraVidaJefe.clear();
 
     // Dibujar el fondo de la barra de vida (opcional)
-  if (this.jefeFinal && this.jefeFinal.active) {
-    this.barraVidaJefe.clear();
-    this.barraVidaJefe.fillStyle(0xff0000, 1);
-    this.barraVidaJefe.fillRect(
-      this.jefeFinal.x - 100,
-      this.jefeFinal.y + 60,
-      (this.vidaJefeFinal / 1000) * 200,
-      20
-    );
-  }
-// Fondo de la barra
+    if (this.jefeFinal && this.jefeFinal.active) {
+      this.barraVidaJefe.clear();
+      this.barraVidaJefe.fillStyle(0xff0000, 1);
+      this.barraVidaJefe.fillRect(
+        this.jefeFinal.x - 100,
+        this.jefeFinal.y + 60,
+        (this.vidaJefeFinal / 1000) * 200,
+        20
+      );
+    }
+    // Fondo de la barra
 
     // Dibujar la barra de vida (roja)
     this.barraVidaJefe.fillStyle(0xff0000, 1); // Color rojo
@@ -674,7 +681,6 @@ class scenaJuego extends Phaser.Scene {
     this.balasJefe.clear(true, true);
     this.barraVidaJefe?.setVisible(false);
 
-    // Resto del código de reiniciarJuego...
     this.isGameOver = false;
     this.physics.resume();
 
@@ -795,37 +801,43 @@ class scenaJuego extends Phaser.Scene {
       }
 
       // Limpiar balas fuera de pantalla
-  if (this.balasJefe && this.balasJefe.children) {
-    this.balasJefe.children.each((bala) => {
-      if (bala.active && (bala.x < -50 || bala.x > this.scale.width + 50 || bala.y < -50 || bala.y > this.scale.height + 50)) {
-        bala.destroy();
+      if (this.balasJefe && this.balasJefe.children) {
+        this.balasJefe.children.each((bala) => {
+          if (
+            bala.active &&
+            (bala.x < -50 ||
+              bala.x > this.scale.width + 50 ||
+              bala.y < -50 ||
+              bala.y > this.scale.height + 50)
+          ) {
+            bala.destroy();
+          }
+        });
+      }
+    }
+
+    // Movimiento de los elementos en pantalla
+    this.GranPlaneta.x -= 0.03;
+    this.planetas.x -= 1;
+    this.planetas2.x -= 1;
+    this.estrellas.x -= 1;
+    this.estrellas1.x -= 1;
+    this.estrellas2.x -= 1;
+
+    // Reiniciar posición de los elementos cuando salen de la pantalla
+    if (this.planetas.x < -50) this.planetas.x = 850;
+    if (this.planetas2.x < -50) this.planetas2.x = 850;
+    if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
+    if (this.estrellas.x < -50) this.estrellas.x = 850;
+    if (this.estrellas1.x < -50) this.estrellas1.x = 850;
+    if (this.estrellas2.x < -50) this.estrellas2.x = 850;
+
+    // Eliminar balas fuera de pantalla
+    this.balas.children.each((bala) => {
+      if (bala.active && bala.x > this.scale.width) {
+        bala.setActive(false);
+        bala.setVisible(false);
       }
     });
   }
 }
-
-      // Movimiento de los elementos en pantalla
-      this.GranPlaneta.x -= 0.03;
-      this.planetas.x -= 1;
-      this.planetas2.x -= 1;
-      this.estrellas.x -= 1;
-      this.estrellas1.x -= 1;
-      this.estrellas2.x -= 1;
-
-      // Reiniciar posición de los elementos cuando salen de la pantalla
-      if (this.planetas.x < -50) this.planetas.x = 850;
-      if (this.planetas2.x < -50) this.planetas2.x = 850;
-      if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
-      if (this.estrellas.x < -50) this.estrellas.x = 850;
-      if (this.estrellas1.x < -50) this.estrellas1.x = 850;
-      if (this.estrellas2.x < -50) this.estrellas2.x = 850;
-
-      // Eliminar balas fuera de pantalla
-      this.balas.children.each((bala) => {
-        if (bala.active && bala.x > this.scale.width) {
-          bala.setActive(false);
-          bala.setVisible(false);
-        }
-      });
-    }
-  }
