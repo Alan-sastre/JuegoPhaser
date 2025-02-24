@@ -422,15 +422,15 @@ class scenaJuego extends Phaser.Scene {
   createJoystick() {
     const { width, height } = this.scale.displaySize;
 
-    // Crear la base del joystick (lado derecho)
+    // Crear la base del joystick (lado izquierdo)
     this.joystickBase = this.add
-      .circle(width * 0.85, height * 0.85, 50, 0x888888, 0.5)
+      .circle(width * 0.15, height * 0.85, 50, 0x888888, 0.5)
       .setDepth(10)
       .setInteractive();
 
     // Crear la parte móvil del joystick
     this.joystickThumb = this.add
-      .circle(width * 0.85, height * 0.85, 25, 0xcccccc, 0.8)
+      .circle(width * 0.15, height * 0.85, 25, 0xcccccc, 0.8)
       .setDepth(10);
 
     // Eventos táctiles
@@ -457,9 +457,9 @@ class scenaJuego extends Phaser.Scene {
   createBotonDisparo() {
     const { width, height } = this.scale.displaySize;
 
-    // Crear el botón de disparo (lado izquierdo)
+    // Crear el botón de disparo (lado derecho)
     this.botonDisparo = this.add
-      .image(width * 0.15, height * 0.85, "botonDisparo")
+      .image(width * 0.85, height * 0.85, "botonDisparo")
       .setInteractive()
       .setScale(0.5)
       .setDepth(10);
