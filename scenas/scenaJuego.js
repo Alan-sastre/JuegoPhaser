@@ -241,7 +241,6 @@ class scenaJuego extends Phaser.Scene {
         this.balasJefe,
         this.nave,
         (nave, bala) => {
-          console.log(" Bala impactó en la nave!");
           bala.destroy();
           this.naveParpadea();
           this.vida -= 10;
@@ -260,8 +259,13 @@ class scenaJuego extends Phaser.Scene {
       this.actualizarBarraVidaJefe(); // Dibujar la barra de vida
 
       // Iniciar patrón de ataque del jefe con un temporizador controlado
+      if (this.timerAtaqueJefe) {
+        this.timerAtaqueJefe.remove();
+        this.timerAtaqueJefe = null;
+      }
+
       this.timerAtaqueJefe = this.time.addEvent({
-        delay: this.tiempoAtaqueJefe, // Frecuencia de disparo
+        delay: this.tiempoAtaqueJefe,
         callback: this.ataqueJefeFinal,
         callbackScope: this,
         loop: true,
@@ -300,13 +304,17 @@ class scenaJuego extends Phaser.Scene {
     this.barraVidaJefe.clear();
 
     // Dibujar el fondo de la barra de vida (opcional)
-    this.barraVidaJefe.fillStyle(0x000000, 1); // Color negro de fondo
+  if (this.jefeFinal && this.jefeFinal.active) {
+    this.barraVidaJefe.clear();
+    this.barraVidaJefe.fillStyle(0xff0000, 1);
     this.barraVidaJefe.fillRect(
       this.jefeFinal.x - 100,
       this.jefeFinal.y + 60,
-      200,
+      (this.vidaJefeFinal / 1000) * 200,
       20
-    ); // Fondo de la barra
+    );
+  }
+// Fondo de la barra
 
     // Dibujar la barra de vida (roja)
     this.barraVidaJefe.fillStyle(0xff0000, 1); // Color rojo
@@ -341,19 +349,11 @@ class scenaJuego extends Phaser.Scene {
       if (bala) {
         bala.setActive(true);
         bala.setVisible(true);
-        bala.setTint(0xff0000); // Color rojo para distinguirlas
         bala.setVelocity(Math.cos(angle) * 200, Math.sin(angle) * 100);
-        bala.body.setAllowGravity(false); // Desactivar gravedad
-        bala.setCollideWorldBounds(false); // No limitar a los bordes
+        bala.body.setAllowGravity(false);
 
-        // Asegurar que el cuerpo de la bala sea detectado en colisiones
-        bala.body.setSize(20, 20); // Ajusta el tamaño del cuerpo físico
-        bala.body.setOffset(4, 4); // Ajusta el offset si es necesario
-        bala.body.setImmovable(false);
-        bala.body.setBounce(0);
-
-        // Destruir la bala si no impacta en 3 segundos
-        this.time.delayedCall(6000, () => {
+        // Destruir la bala después de un tiempo
+        this.time.delayedCall(3000, () => {
           if (bala && bala.active) {
             bala.destroy();
           }
@@ -770,7 +770,9 @@ class scenaJuego extends Phaser.Scene {
 
   update() {
     if (!this.isGameOver && !this.physics.world.isPaused) {
-
+      if (this.disparoAutomatico) {
+        this.disparar();
+      }
 
       // Verificar si se alcanzó la puntuación para el jefe final
       if (this.score >= 100 && !this.jefeFinalActivo) {
@@ -793,20 +795,14 @@ class scenaJuego extends Phaser.Scene {
       }
 
       // Limpiar balas fuera de pantalla
-      if (this.balasJefe && this.balasJefe.children) {
-        this.balasJefe.children.each((bala) => {
-          if (bala.active) {
-            if (
-              bala.x < -50 ||
-              bala.x > this.scale.width + 50 ||
-              bala.y < -50 ||
-              bala.y > this.scale.height + 50
-            ) {
-              bala.destroy();
-            }
-          }
-        });
+  if (this.balasJefe && this.balasJefe.children) {
+    this.balasJefe.children.each((bala) => {
+      if (bala.active && (bala.x < -50 || bala.x > this.scale.width + 50 || bala.y < -50 || bala.y > this.scale.height + 50)) {
+        bala.destroy();
       }
+    });
+  }
+}
 
       // Movimiento de los elementos en pantalla
       this.GranPlaneta.x -= 0.03;
@@ -834,4 +830,3 @@ class scenaJuego extends Phaser.Scene {
     }
   }
 }
-
