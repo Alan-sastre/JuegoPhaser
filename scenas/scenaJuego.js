@@ -6,21 +6,21 @@ class scenaJuego extends Phaser.Scene {
     this.score = 0;
     this.vida = 100;
     this.isMobile = false;
-    this.jefeFinal = null; // Variable para el jefe final
-    this.balasJefe = 3; // Grupo de balas del jefe
+    this.jefeFinal = null;
+    this.balasJefe = 3;
     this.eventos = [];
-    this.disparoJefeEvento = null; // Evento para los disparos del jefe
-    this.timerAtaqueJefe = null; // Nueva variable para controlar el timer
-    this.jefeFinalActivo = false; // Estado del jefe final
-    this.vidaJefeFinal = 1000; // Vida del jefe final
-    this.tiempoAtaqueJefe = 900; // Tiempo entre ataques del jefe
-    this.jefeFinalVelocidad = 2; // Velocidad de movimiento del jefe final
-    this.joystick = null; // Referencia al joystick
-    this.isTouching = false; // Estado del toque
-    this.touchPosition = { x: 0, y: 0 }; // Posición del toque
-    this.joystickBase = null; // Base del joystick
-    this.joystickThumb = null; // Parte móvil del joystick
-    this.botonDisparo = null; // Nuevo: Referencia al botón de disparo
+    this.disparoJefeEvento = null;
+    this.timerAtaqueJefe = null;
+    this.jefeFinalActivo = false;
+    this.vidaJefeFinal = 1000;
+    this.tiempoAtaqueJefe = 900;
+    this.jefeFinalVelocidad = 2;
+    this.joystick = null;
+    this.isTouching = false;
+    this.touchPosition = { x: 0, y: 0 };
+    this.joystickBase = null;
+    this.joystickThumb = null;
+    this.botonDisparo = null;
   }
 
   preload() {
@@ -56,20 +56,35 @@ class scenaJuego extends Phaser.Scene {
     );
   }
   create() {
-    // Verificar que this.resize sea una función antes de agregar el listener
-    if (typeof this.resize === "function") {
-      this.scale.on("resize", this.resize.bind(this), this);
-    } else {
-      console.error("this.resize no es una función");
-    }
-
+    // Verificar si es un dispositivo móvil
     this.isMobile =
       this.sys.game.device.os.android || this.sys.game.device.os.iOS;
+
+    // Agregar listener para el cambio de orientación
+    window.addEventListener("resize", () => {
+      if (this.isMobile) {
+        this.adjustControlsPosition();
+      }
+    });
 
     // Esperar un frame para asegurarse de que las dimensiones estén correctas
     this.time.delayedCall(1, () => {
       this.initializeGame();
     });
+  }
+  adjustControlsPosition() {
+    const { width, height } = this.scale;
+
+    if (this.joystickBase && this.joystickThumb) {
+      // Actualizar posición del joystick
+      this.joystickBase.setPosition(width * 0.85, height * 0.75);
+      this.joystickThumb.setPosition(width * 0.85, height * 0.75);
+    }
+
+    if (this.botonDisparo) {
+      // Actualizar posición del botón de disparo
+      this.botonDisparo.setPosition(width * 0.15, height * 0.75);
+    }
   }
 
   initializeGame() {
@@ -85,6 +100,13 @@ class scenaJuego extends Phaser.Scene {
     // Añadir barra de vida del jefe final
     this.barraVidaJefe = this.add.graphics();
     this.barraVidaJefe.setVisible(false);
+
+    // Controles táctiles (solo para móviles)
+    if (this.isMobile) {
+      this.createJoystick();
+      this.createBotonDisparo();
+      this.adjustControlsPosition(); // Ajustar posiciones iniciales
+    }
 
     // Añadir elementos del juego
     let scaleFactor = this.scale.width > 800 ? 0.5 : 0.3;
@@ -420,18 +442,20 @@ class scenaJuego extends Phaser.Scene {
   }
 
   createJoystick() {
-    const { width, height } = this.scale.displaySize;
+    const { width, height } = this.scale;
 
-    // Crear la base del joystick (lado izquierdo)
+    // Crear la base del joystick (lado derecho)
     this.joystickBase = this.add
-      .circle(width * 0.15, height * 0.85, 50, 0x888888, 0.5)
-      .setDepth(10)
+      .circle(width * 0.85, height * 0.75, 50, 0x888888, 0.5)
+      .setDepth(1000) // Aumentar el depth para asegurar visibilidad
+      .setScrollFactor(0) // Mantener fijo en la pantalla
       .setInteractive();
 
     // Crear la parte móvil del joystick
     this.joystickThumb = this.add
-      .circle(width * 0.15, height * 0.85, 25, 0xcccccc, 0.8)
-      .setDepth(10);
+      .circle(width * 0.85, height * 0.75, 25, 0xcccccc, 0.8)
+      .setDepth(1000) // Aumentar el depth para asegurar visibilidad
+      .setScrollFactor(0); // Mantener fijo en la pantalla
 
     // Eventos táctiles
     this.input.on("pointerdown", (pointer) => {
@@ -455,14 +479,18 @@ class scenaJuego extends Phaser.Scene {
   }
 
   createBotonDisparo() {
-    const { width, height } = this.scale.displaySize;
+    const { width, height } = this.scale;
 
-    // Crear el botón de disparo (lado derecho)
+    // Crear el botón de disparo (lado izquierdo)
     this.botonDisparo = this.add
-      .image(width * 0.85, height * 0.85, "botonDisparo")
+      .image(width * 0.15, height * 0.75, "botonDisparo")
       .setInteractive()
       .setScale(0.5)
-      .setDepth(10);
+      .setDepth(1000) // Aumentar el depth para asegurar visibilidad
+      .setScrollFactor(0); // Mantener fijo en la pantalla
+
+    // Hacer el botón semi-transparente
+    this.botonDisparo.setAlpha(0.7);
 
     // Evento para disparar cuando se presiona el botón
     this.botonDisparo.on("pointerdown", () => {
