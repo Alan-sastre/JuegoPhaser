@@ -21,7 +21,6 @@ class scenaJuego extends Phaser.Scene {
     this.joystickBase = null;
     this.joystickThumb = null;
     this.botonDisparo = null;
-    this.activePointers = new Set(); // Para rastrear toques activos
   }
 
   preload() {
@@ -487,33 +486,36 @@ class scenaJuego extends Phaser.Scene {
     const { width, height } = this.scale;
 
     this.botonDisparo = this.add
-        .image(width * 0.15, height * 0.75, "botonDisparo")
-        .setInteractive()
-        .setScale(5) // Ajusta el tamaño del botón de disparo
-        .setDepth(1000)
-        .setScrollFactor(0)
-        .setAlpha(0.8);
+      .image(width * 0.15, height * 0.75, "botonDisparo")
+      .setInteractive()
+      .setScale(5)
+      .setDepth(1000)
+      .setScrollFactor(0)
+      .setAlpha(0.8);
 
     // Eventos para el botón de disparo con un ID separado
     this.botonDisparo.on("pointerdown", (pointer) => {
-        this.disparoPointerId = pointer.id;
-        this.disparoAutomatico = true;
+      pointer.event.stopPropagation();
+      this.disparoPointerId = pointer.id;
+      this.disparoAutomatico = true;
     });
 
     this.botonDisparo.on("pointerup", (pointer) => {
-        if (pointer.id === this.disparoPointerId) {
-            this.disparoAutomatico = false;
-            this.disparoPointerId = null;
-        }
+      if (pointer.id === this.disparoPointerId) {
+        pointer.event.stopPropagation();
+        this.disparoAutomatico = false;
+        this.disparoPointerId = null;
+      }
     });
 
     this.botonDisparo.on("pointerout", (pointer) => {
-        if (pointer.id === this.disparoPointerId) {
-            this.disparoAutomatico = false;
-            this.disparoPointerId = null;
-        }
+      if (pointer.id === this.disparoPointerId) {
+        pointer.event.stopPropagation();
+        this.disparoAutomatico = false;
+        this.disparoPointerId = null;
+      }
     });
-}
+  }
 
   isPointerOverJoystick(pointer) {
     const distance = Phaser.Math.Distance.Between(
@@ -768,7 +770,6 @@ class scenaJuego extends Phaser.Scene {
 
   update() {
     if (!this.isGameOver && !this.physics.world.isPaused) {
-      // Disparar automáticamente si el botón de disparo está presionado
       if (this.disparoAutomatico) {
         this.disparar();
       }
@@ -835,3 +836,4 @@ class scenaJuego extends Phaser.Scene {
     }
   }
 }
+
