@@ -55,7 +55,6 @@ class scenaJuego extends Phaser.Scene {
       "assets/scenaJuego/sonidoImpactoJefe.mp3"
     );
   }
-
   create() {
     // Verificar que this.resize sea una función antes de agregar el listener
     if (typeof this.resize === "function") {
@@ -75,9 +74,6 @@ class scenaJuego extends Phaser.Scene {
 
   initializeGame() {
     const { width, height } = this.scale.displaySize;
-
-    // Calcular el DPR (Device Pixel Ratio)
-    this.dpr = window.devicePixelRatio || 1;
 
     // Ajustar el fondo para que ocupe toda la pantalla
     this.fondo = this.add.image(0, 0, "fondo1").setOrigin(0, 0);
@@ -426,7 +422,7 @@ class scenaJuego extends Phaser.Scene {
   createJoystick() {
     const { width, height } = this.scale.displaySize;
 
-    // Crear la base del joystick
+    // Crear la base del joystick (lado derecho)
     this.joystickBase = this.add
       .circle(width * 0.85, height * 0.85, 50, 0x888888, 0.5)
       .setDepth(10)
@@ -434,7 +430,7 @@ class scenaJuego extends Phaser.Scene {
 
     // Crear la parte móvil del joystick
     this.joystickThumb = this.add
-      .circle(width * 0.15, height * 0.85, 25, 0xcccccc, 0.8)
+      .circle(width * 0.85, height * 0.85, 25, 0xcccccc, 0.8)
       .setDepth(10);
 
     // Eventos táctiles
@@ -461,11 +457,12 @@ class scenaJuego extends Phaser.Scene {
   createBotonDisparo() {
     const { width, height } = this.scale.displaySize;
 
-    // Crear el botón de disparo
-    this.joystickBase = this.add
-      .circle(width * 0.85, height * 0.85, 50, 0x888888, 0.5)
-      .setDepth(10)
-      .setInteractive();
+    // Crear el botón de disparo (lado izquierdo)
+    this.botonDisparo = this.add
+      .image(width * 0.15, height * 0.85, "botonDisparo")
+      .setInteractive()
+      .setScale(0.5)
+      .setDepth(10);
 
     // Evento para disparar cuando se presiona el botón
     this.botonDisparo.on("pointerdown", () => {
@@ -523,7 +520,6 @@ class scenaJuego extends Phaser.Scene {
     this.barraVida.fillStyle(0xff0000, 1);
     this.barraVida.fillRect(16, 60, this.vida, 20);
   }
-
   gameOver() {
     if (this.timerAtaqueJefe) {
       this.timerAtaqueJefe.remove();
