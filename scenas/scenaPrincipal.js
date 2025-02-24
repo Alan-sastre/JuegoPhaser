@@ -103,7 +103,7 @@ class scenaPrincipal extends Phaser.Scene {
         duration: 1000,
         onComplete: () => {
           console.log("Cambio de escena ejecutado");
-          this.scene.start("scenaIntro", { fromFade: true });
+          this.scene.start("scenaVideo", { fromFade: true });
         },
       });
     };
