@@ -447,18 +447,18 @@ class scenaJuego extends Phaser.Scene {
     // Crear la base del joystick (lado derecho)
     this.joystickBase = this.add
       .circle(width * 0.85, height * 0.75, 50, 0x888888, 0.5)
-      .setDepth(1000) // Aumentar el depth para asegurar visibilidad
-      .setScrollFactor(0) // Mantener fijo en la pantalla
+      .setDepth(1000)
+      .setScrollFactor(0)
       .setInteractive();
 
     // Crear la parte móvil del joystick
     this.joystickThumb = this.add
       .circle(width * 0.85, height * 0.75, 25, 0xcccccc, 0.8)
-      .setDepth(1000) // Aumentar el depth para asegurar visibilidad
-      .setScrollFactor(0); // Mantener fijo en la pantalla
+      .setDepth(1000)
+      .setScrollFactor(0);
 
-    // Eventos táctiles
-    this.input.on("pointerdown", (pointer) => {
+    // Eventos táctiles específicos para el joystick
+    this.joystickBase.on("pointerdown", (pointer) => {
       if (this.isPointerOverJoystick(pointer)) {
         this.isTouching = true;
         this.touchPosition = { x: pointer.x, y: pointer.y };
@@ -466,15 +466,18 @@ class scenaJuego extends Phaser.Scene {
     });
 
     this.input.on("pointermove", (pointer) => {
-      if (this.isTouching) {
+      if (this.isTouching && pointer.id === this.joystickPointerId) {
         this.touchPosition = { x: pointer.x, y: pointer.y };
         this.updateJoystick();
       }
     });
 
-    this.input.on("pointerup", () => {
-      this.isTouching = false;
-      this.resetJoystick();
+    this.input.on("pointerup", (pointer) => {
+      if (pointer.id === this.joystickPointerId) {
+        this.isTouching = false;
+        this.joystickPointerId = null;
+        this.resetJoystick();
+      }
     });
   }
 
@@ -485,16 +488,26 @@ class scenaJuego extends Phaser.Scene {
     this.botonDisparo = this.add
       .image(width * 0.15, height * 0.75, "botonDisparo")
       .setInteractive()
-      .setScale(5)
-      .setDepth(1000) // Aumentar el depth para asegurar visibilidad
-      .setScrollFactor(0); // Mantener fijo en la pantalla
+      .setScale(1.5)
+      .setDepth(1000)
+      .setScrollFactor(0)
+      .setAlpha(0.8);
 
-    // Hacer el botón semi-transparente
-    this.botonDisparo.setAlpha(0.7);
-
-    // Evento para disparar cuando se presiona el botón
-    this.botonDisparo.on("pointerdown", () => {
+    // Eventos específicos para el botón de disparo
+    this.botonDisparo.on("pointerdown", (pointer) => {
+      pointer.event.stopPropagation(); // Evitar que el evento se propague al joystick
+      this.disparoAutomatico = true;
       this.disparar();
+    });
+
+    this.botonDisparo.on("pointerup", (pointer) => {
+      pointer.event.stopPropagation();
+      this.disparoAutomatico = false;
+    });
+
+    this.botonDisparo.on("pointerout", (pointer) => {
+      pointer.event.stopPropagation();
+      this.disparoAutomatico = false;
     });
   }
 
@@ -505,7 +518,11 @@ class scenaJuego extends Phaser.Scene {
       this.joystickBase.x,
       this.joystickBase.y
     );
-    return distance <= this.joystickBase.radius;
+    if (distance <= this.joystickBase.radius) {
+      this.joystickPointerId = pointer.id;
+      return true;
+    }
+    return false;
   }
 
   updateJoystick() {
@@ -782,6 +799,9 @@ class scenaJuego extends Phaser.Scene {
           }
         });
       }
+       if (this.disparoAutomatico) {
+         this.disparar();
+       }
 
       // Movimiento de los elementos en pantalla
       this.GranPlaneta.x -= 0.03;
