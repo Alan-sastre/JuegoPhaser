@@ -770,9 +770,7 @@ class scenaJuego extends Phaser.Scene {
 
   update() {
     if (!this.isGameOver && !this.physics.world.isPaused) {
-      if (this.disparoAutomatico) {
-        this.disparar();
-      }
+
 
       // Verificar si se alcanzó la puntuación para el jefe final
       if (this.score >= 100 && !this.jefeFinalActivo) {
