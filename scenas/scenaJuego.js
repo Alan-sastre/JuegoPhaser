@@ -7,7 +7,7 @@ class scenaJuego extends Phaser.Scene {
     this.vida = 100;
     this.isMobile = false;
     this.jefeFinal = null;
-    this.balasJefe = 3;
+    this.balasJefe = null;
     this.eventos = [];
     this.disparoJefeEvento = null;
     this.timerAtaqueJefe = null;
@@ -55,6 +55,7 @@ class scenaJuego extends Phaser.Scene {
       "assets/scenaJuego/sonidoImpactoJefe.mp3"
     );
   }
+
   create() {
     // Verificar si es un dispositivo móvil
     this.isMobile =
@@ -72,6 +73,7 @@ class scenaJuego extends Phaser.Scene {
       this.initializeGame();
     });
   }
+
   adjustControlsPosition() {
     const { width, height } = this.scale;
 
@@ -321,26 +323,6 @@ class scenaJuego extends Phaser.Scene {
         20
       );
     }
-    // Fondo de la barra
-
-    // Dibujar la barra de vida (roja)
-    this.barraVidaJefe.fillStyle(0xff0000, 1); // Color rojo
-    this.barraVidaJefe.fillRect(
-      this.jefeFinal.x - 100,
-      this.jefeFinal.y + 60,
-      (this.vidaJefeFinal / 1000) * 200, // Ancho proporcional a la vida
-      20
-    );
-
-    // Dibujar el borde de la barra de vida (opcional)
-    this.barraVidaJefe.lineStyle(2, 0xffffff); // Borde blanco
-    this.barraVidaJefe.strokeRect(
-      this.jefeFinal.x - 100,
-      this.jefeFinal.y + 60,
-      200,
-      20
-    );
-    this.barraVidaJefe.setDepth(1000); // Asegurar que esté en la capa superior
   }
 
   ataqueJefeFinal() {
@@ -578,6 +560,7 @@ class scenaJuego extends Phaser.Scene {
     this.barraVida.fillStyle(0xff0000, 1);
     this.barraVida.fillRect(16, 60, this.vida, 20);
   }
+
   gameOver() {
     if (this.timerAtaqueJefe) {
       this.timerAtaqueJefe.remove();
@@ -681,6 +664,7 @@ class scenaJuego extends Phaser.Scene {
     this.balasJefe.clear(true, true);
     this.barraVidaJefe?.setVisible(false);
 
+    // Resto del código de reiniciarJuego...
     this.isGameOver = false;
     this.physics.resume();
 
@@ -814,30 +798,30 @@ class scenaJuego extends Phaser.Scene {
           }
         });
       }
+
+      // Movimiento de los elementos en pantalla
+      this.GranPlaneta.x -= 0.03;
+      this.planetas.x -= 1;
+      this.planetas2.x -= 1;
+      this.estrellas.x -= 1;
+      this.estrellas1.x -= 1;
+      this.estrellas2.x -= 1;
+
+      // Reiniciar posición de los elementos cuando salen de la pantalla
+      if (this.planetas.x < -50) this.planetas.x = 850;
+      if (this.planetas2.x < -50) this.planetas2.x = 850;
+      if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
+      if (this.estrellas.x < -50) this.estrellas.x = 850;
+      if (this.estrellas1.x < -50) this.estrellas1.x = 850;
+      if (this.estrellas2.x < -50) this.estrellas2.x = 850;
+
+      // Eliminar balas fuera de pantalla
+      this.balas.children.each((bala) => {
+        if (bala.active && bala.x > this.scale.width) {
+          bala.setActive(false);
+          bala.setVisible(false);
+        }
+      });
     }
-
-    // Movimiento de los elementos en pantalla
-    this.GranPlaneta.x -= 0.03;
-    this.planetas.x -= 1;
-    this.planetas2.x -= 1;
-    this.estrellas.x -= 1;
-    this.estrellas1.x -= 1;
-    this.estrellas2.x -= 1;
-
-    // Reiniciar posición de los elementos cuando salen de la pantalla
-    if (this.planetas.x < -50) this.planetas.x = 850;
-    if (this.planetas2.x < -50) this.planetas2.x = 850;
-    if (this.GranPlaneta.x < -100) this.GranPlaneta.x = 900;
-    if (this.estrellas.x < -50) this.estrellas.x = 850;
-    if (this.estrellas1.x < -50) this.estrellas1.x = 850;
-    if (this.estrellas2.x < -50) this.estrellas2.x = 850;
-
-    // Eliminar balas fuera de pantalla
-    this.balas.children.each((bala) => {
-      if (bala.active && bala.x > this.scale.width) {
-        bala.setActive(false);
-        bala.setVisible(false);
-      }
-    });
   }
 }
