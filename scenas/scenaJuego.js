@@ -485,7 +485,7 @@ class scenaJuego extends Phaser.Scene {
     this.botonDisparo = this.add
       .image(width * 0.15, height * 0.75, "botonDisparo")
       .setInteractive()
-      .setScale(3)
+      .setScale(5)
       .setDepth(1000) // Aumentar el depth para asegurar visibilidad
       .setScrollFactor(0); // Mantener fijo en la pantalla
 
