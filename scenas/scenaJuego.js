@@ -457,10 +457,11 @@ class scenaJuego extends Phaser.Scene {
       .setDepth(1000)
       .setScrollFactor(0);
 
-    // Eventos táctiles específicos para el joystick
+    // Eventos táctiles para el joystick
     this.joystickBase.on("pointerdown", (pointer) => {
       if (this.isPointerOverJoystick(pointer)) {
         this.isTouching = true;
+        this.joystickPointerId = pointer.id;
         this.touchPosition = { x: pointer.x, y: pointer.y };
       }
     });
@@ -484,7 +485,6 @@ class scenaJuego extends Phaser.Scene {
   createBotonDisparo() {
     const { width, height } = this.scale;
 
-    // Crear el botón de disparo (lado izquierdo)
     this.botonDisparo = this.add
       .image(width * 0.15, height * 0.75, "botonDisparo")
       .setInteractive()
@@ -493,21 +493,27 @@ class scenaJuego extends Phaser.Scene {
       .setScrollFactor(0)
       .setAlpha(0.8);
 
-    // Eventos específicos para el botón de disparo
+    // Eventos para el botón de disparo con un ID separado
     this.botonDisparo.on("pointerdown", (pointer) => {
-      pointer.event.stopPropagation(); // Evitar que el evento se propague al joystick
+      pointer.event.stopPropagation();
+      this.disparoPointerId = pointer.id;
       this.disparoAutomatico = true;
-      this.disparar();
     });
 
     this.botonDisparo.on("pointerup", (pointer) => {
-      pointer.event.stopPropagation();
-      this.disparoAutomatico = false;
+      if (pointer.id === this.disparoPointerId) {
+        pointer.event.stopPropagation();
+        this.disparoAutomatico = false;
+        this.disparoPointerId = null;
+      }
     });
 
     this.botonDisparo.on("pointerout", (pointer) => {
-      pointer.event.stopPropagation();
-      this.disparoAutomatico = false;
+      if (pointer.id === this.disparoPointerId) {
+        pointer.event.stopPropagation();
+        this.disparoAutomatico = false;
+        this.disparoPointerId = null;
+      }
     });
   }
 
@@ -764,6 +770,10 @@ class scenaJuego extends Phaser.Scene {
 
   update() {
     if (!this.isGameOver && !this.physics.world.isPaused) {
+      if (this.disparoAutomatico) {
+        this.disparar();
+      }
+
       // Verificar si se alcanzó la puntuación para el jefe final
       if (this.score >= 100 && !this.jefeFinalActivo) {
         this.crearJefeFinal();
@@ -799,9 +809,6 @@ class scenaJuego extends Phaser.Scene {
           }
         });
       }
-       if (this.disparoAutomatico) {
-         this.disparar();
-       }
 
       // Movimiento de los elementos en pantalla
       this.GranPlaneta.x -= 0.03;
