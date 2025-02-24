@@ -488,7 +488,7 @@ class scenaJuego extends Phaser.Scene {
     this.botonDisparo = this.add
       .image(width * 0.15, height * 0.75, "botonDisparo")
       .setInteractive()
-      .setScale(0.5) // Ajusta el tamaño del botón de disparo
+      .setScale(5) // Ajusta el tamaño del botón de disparo
       .setDepth(1000)
       .setScrollFactor(0)
       .setAlpha(0.8);
