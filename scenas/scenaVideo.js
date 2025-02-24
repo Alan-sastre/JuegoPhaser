@@ -32,18 +32,21 @@ class VideoScene extends Phaser.Scene {
       "introVideo"
     );
 
-    // Esperar a que el video se reproduzca para obtener dimensiones correctas
+    // Esperar a que el video esté listo para obtener su tamaño real
     video.on("play", () => {
-      const videoWidth = video.getNaturalWidth();
-      const videoHeight = video.getNaturalHeight();
+      const videoElement = video.video; // Referencia al elemento de video HTML
+      const videoWidth = videoElement.videoWidth;
+      const videoHeight = videoElement.videoHeight;
 
       if (videoWidth && videoHeight) {
         const videoAspectRatio = videoWidth / videoHeight;
         const screenAspectRatio = screenWidth / screenHeight;
 
         if (videoAspectRatio > screenAspectRatio) {
+          // Si el video es más ancho que la pantalla, ajustamos el ancho
           video.setDisplaySize(screenWidth, screenWidth / videoAspectRatio);
         } else {
+          // Si el video es más alto que la pantalla, ajustamos la altura
           video.setDisplaySize(screenHeight * videoAspectRatio, screenHeight);
         }
       }
