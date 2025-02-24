@@ -21,22 +21,9 @@ class scenaJuego extends Phaser.Scene {
     this.joystickBase = null;
     this.joystickThumb = null;
     this.botonDisparo = null;
-    this.movementJoystick = {
-      base: null,
-      thumb: null,
-      isTouching: false,
-      pointerId: null,
-      position: { x: 0, y: 0 },
-    };
-    this.actionJoystick = {
-      base: null,
-      thumb: null,
-      isTouching: false,
-      pointerId: null,
-      position: { x: 0, y: 0 },
-      isFiring: false,
-      direction: { x: 0, y: 0 },
-    };
+    this.disparoAutomatico = false; // Para controlar el disparo automático
+    this.disparoPointerId = null; // Para identificar el puntero del disparo
+    this.joystickPointerId = null; // Para identificar el puntero del joystick
   }
 
   preload() {
@@ -93,17 +80,18 @@ class scenaJuego extends Phaser.Scene {
   adjustControlsPosition() {
     const { width, height } = this.scale;
 
-    // Actualizar posición de los joysticks
-    if (this.movementJoystick.base && this.movementJoystick.thumb) {
-      this.movementJoystick.base.setPosition(width * 0.15, height * 0.75);
-      this.movementJoystick.thumb.setPosition(width * 0.15, height * 0.75);
+    if (this.joystickBase && this.joystickThumb) {
+      // Actualizar posición del joystick
+      this.joystickBase.setPosition(width * 0.85, height * 0.75);
+      this.joystickThumb.setPosition(width * 0.85, height * 0.75);
     }
 
-    if (this.actionJoystick.base && this.actionJoystick.thumb) {
-      this.actionJoystick.base.setPosition(width * 0.85, height * 0.75);
-      this.actionJoystick.thumb.setPosition(width * 0.85, height * 0.75);
+    if (this.botonDisparo) {
+      // Actualizar posición del botón de disparo
+      this.botonDisparo.setPosition(width * 0.15, height * 0.75);
     }
   }
+
   initializeGame() {
     const { width, height } = this.scale.displaySize;
 
@@ -120,7 +108,8 @@ class scenaJuego extends Phaser.Scene {
 
     // Controles táctiles (solo para móviles)
     if (this.isMobile) {
-      this.createDualJoysticks();
+      this.createJoystick();
+      this.createBotonDisparo();
       this.adjustControlsPosition(); // Ajustar posiciones iniciales
     }
 
@@ -219,107 +208,12 @@ class scenaJuego extends Phaser.Scene {
         this.disparar();
       });
     }
-  }
-  createDualJoysticks() {
-    const { width, height } = this.scale;
 
-    // Crear joystick de movimiento (izquierdo)
-    this.movementJoystick.base = this.add
-      .circle(width * 0.15, height * 0.75, 50, 0x888888, 0.5)
-      .setDepth(1000)
-      .setScrollFactor(0)
-      .setInteractive();
-
-    this.movementJoystick.thumb = this.add
-      .circle(width * 0.15, height * 0.75, 25, 0xcccccc, 0.8)
-      .setDepth(1000)
-      .setScrollFactor(0);
-
-    // Crear joystick de acción/disparo (derecho)
-    this.actionJoystick.base = this.add
-      .circle(width * 0.85, height * 0.75, 50, 0x888888, 0.5)
-      .setDepth(1000)
-      .setScrollFactor(0)
-      .setInteractive();
-
-    this.actionJoystick.thumb = this.add
-      .circle(width * 0.85, height * 0.75, 25, 0xcccccc, 0.8)
-      .setDepth(1000)
-      .setScrollFactor(0);
-
-    // Eventos para el joystick de movimiento
-    this.movementJoystick.base.on("pointerdown", (pointer) => {
-      if (this.isPointerOverJoystick(pointer, this.movementJoystick.base)) {
-        this.movementJoystick.isTouching = true;
-        this.movementJoystick.pointerId = pointer.id;
-        this.movementJoystick.position = { x: pointer.x, y: pointer.y };
-      }
-    });
-
-    // Eventos para el joystick de acción/disparo
-    this.actionJoystick.base.on("pointerdown", (pointer) => {
-      if (this.isPointerOverJoystick(pointer, this.actionJoystick.base)) {
-        this.actionJoystick.isTouching = true;
-        this.actionJoystick.pointerId = pointer.id;
-        this.actionJoystick.position = { x: pointer.x, y: pointer.y };
-
-        // Iniciar disparo automático al activar el joystick derecho
-        this.actionJoystick.isFiring = true;
-      }
-    });
-
-    // Eventos globales para manejar el movimiento y liberación de los punteros
-    this.input.on("pointermove", (pointer) => {
-      // Actualizar joystick de movimiento
-      if (
-        this.movementJoystick.isTouching &&
-        pointer.id === this.movementJoystick.pointerId
-      ) {
-        this.movementJoystick.position = { x: pointer.x, y: pointer.y };
-        this.updateJoystick(this.movementJoystick);
-      }
-
-      // Actualizar joystick de acción/disparo
-      if (
-        this.actionJoystick.isTouching &&
-        pointer.id === this.actionJoystick.pointerId
-      ) {
-        this.actionJoystick.position = { x: pointer.x, y: pointer.y };
-        this.updateJoystick(this.actionJoystick);
-
-        // Calcular la dirección para el disparo
-        const baseX = this.actionJoystick.base.x;
-        const baseY = this.actionJoystick.base.y;
-        const angle = Phaser.Math.Angle.Between(
-          baseX,
-          baseY,
-          this.actionJoystick.position.x,
-          this.actionJoystick.position.y
-        );
-
-        this.actionJoystick.direction = {
-          x: Math.cos(angle),
-          y: Math.sin(angle),
-        };
-      }
-    });
-
-    this.input.on("pointerup", (pointer) => {
-      // Liberar joystick de movimiento
-      if (pointer.id === this.movementJoystick.pointerId) {
-        this.movementJoystick.isTouching = false;
-        this.movementJoystick.pointerId = null;
-        this.resetJoystick(this.movementJoystick);
-      }
-
-      // Liberar joystick de acción/disparo
-      if (pointer.id === this.actionJoystick.pointerId) {
-        this.actionJoystick.isTouching = false;
-        this.actionJoystick.pointerId = null;
-        this.actionJoystick.isFiring = false;
-        this.resetJoystick(this.actionJoystick);
-      }
-    });
+    // Controles táctiles (solo para móviles)
+    if (this.isMobile) {
+      this.createJoystick();
+      this.createBotonDisparo();
+    }
   }
 
   crearJefeFinal() {
@@ -555,7 +449,6 @@ class scenaJuego extends Phaser.Scene {
       .setDepth(1000)
       .setScrollFactor(0);
 
-    // Eventos táctiles para el joystick
     this.joystickBase.on("pointerdown", (pointer) => {
       if (this.isPointerOverJoystick(pointer)) {
         this.isTouching = true;
@@ -591,79 +484,71 @@ class scenaJuego extends Phaser.Scene {
       .setScrollFactor(0)
       .setAlpha(0.8);
 
-    // Eventos para el botón de disparo con un ID separado
+    // Eventos para el botón de disparo - MODIFICADO PARA PERMITIR MULTITOUCH
     this.botonDisparo.on("pointerdown", (pointer) => {
-      pointer.event.stopPropagation();
+      // No detener la propagación del evento para permitir multitouch
       this.disparoPointerId = pointer.id;
       this.disparoAutomatico = true;
     });
 
-    this.botonDisparo.on("pointerup", (pointer) => {
+    this.input.on("pointerup", (pointer) => {
       if (pointer.id === this.disparoPointerId) {
-        pointer.event.stopPropagation();
         this.disparoAutomatico = false;
         this.disparoPointerId = null;
       }
     });
 
-    this.botonDisparo.on("pointerout", (pointer) => {
+    this.input.on("pointerout", (pointer) => {
       if (pointer.id === this.disparoPointerId) {
-        pointer.event.stopPropagation();
         this.disparoAutomatico = false;
         this.disparoPointerId = null;
       }
     });
   }
 
-  isPointerOverJoystick(pointer, joystickBase) {
+  isPointerOverJoystick(pointer) {
     const distance = Phaser.Math.Distance.Between(
       pointer.x,
       pointer.y,
-      joystickBase.x,
-      joystickBase.y
+      this.joystickBase.x,
+      this.joystickBase.y
     );
-
-    return distance <= joystickBase.radius;
+    return distance <= this.joystickBase.radius;
   }
 
-  updateJoystick(joystick) {
-    const { x, y } = joystick.position;
-    const baseX = joystick.base.x;
-    const baseY = joystick.base.y;
+  updateJoystick() {
+    const { x, y } = this.touchPosition;
+    const baseX = this.joystickBase.x;
+    const baseY = this.joystickBase.y;
 
     // Calcular la distancia entre el toque y la base del joystick
     const angle = Phaser.Math.Angle.Between(baseX, baseY, x, y);
     const distance = Phaser.Math.Distance.Between(baseX, baseY, x, y);
 
     // Limitar la distancia máxima del joystick
-    const maxDistance = joystick.base.radius;
+    const maxDistance = this.joystickBase.radius;
     const clampedDistance = Phaser.Math.Clamp(distance, 0, maxDistance);
 
     // Mover la parte móvil del joystick
-    joystick.thumb.x = baseX + Math.cos(angle) * clampedDistance;
-    joystick.thumb.y = baseY + Math.sin(angle) * clampedDistance;
+    this.joystickThumb.x = baseX + Math.cos(angle) * clampedDistance;
+    this.joystickThumb.y = baseY + Math.sin(angle) * clampedDistance;
 
-    // Si es el joystick de movimiento, mover la nave
-    if (joystick === this.movementJoystick) {
-      // Calcular la fuerza del joystick (normalizada entre 0 y 1)
-      const forceX = (joystick.thumb.x - baseX) / maxDistance;
-      const forceY = (joystick.thumb.y - baseY) / maxDistance;
+    // Calcular la fuerza del joystick (normalizada entre 0 y 1)
+    const forceX = (this.joystickThumb.x - baseX) / maxDistance;
+    const forceY = (this.joystickThumb.y - baseY) / maxDistance;
 
-      // Mover la nave
-      const speed = 200;
-      this.nave.setVelocity(forceX * speed, forceY * speed);
-    }
+    // Mover la nave
+    const speed = 200;
+    this.nave.setVelocity(forceX * speed, forceY * speed);
   }
 
-  resetJoystick(joystick) {
+  resetJoystick() {
     // Restablecer la posición del joystick
-    joystick.thumb.x = joystick.base.x;
-    joystick.thumb.y = joystick.base.y;
+    this.joystickThumb.x = this.joystickBase.x;
+    this.joystickThumb.y = this.joystickBase.y;
 
-    // Si es el joystick de movimiento, detener el movimiento de la nave
-    if (joystick === this.movementJoystick) {
-      this.nave.setVelocity(0, 0);
-    }
+    // Detener el movimiento de la nave
+    this.nave.setVelocity(0, 0);
   }
 
   actualizarBarraVida() {
@@ -871,6 +756,7 @@ class scenaJuego extends Phaser.Scene {
 
   update() {
     if (!this.isGameOver && !this.physics.world.isPaused) {
+      // Verificar el disparo automático independientemente del movimiento
       if (this.disparoAutomatico) {
         this.disparar();
       }
