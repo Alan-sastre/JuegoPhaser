@@ -7,7 +7,7 @@ class VideoScene extends Phaser.Scene {
     // Cargar el video (asegúrate de que la ruta sea correcta)
     this.load.video(
       "introVideo",
-      "assets/scenaVideo/introVideo.mp4",
+      "assets/scenaVideo/introduccionVideo.mp4",
       "loadeddata",
       false,
       true
