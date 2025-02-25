@@ -24,13 +24,12 @@ class scenaPrincipal extends Phaser.Scene {
   create() {
     const { width, height } = this.scale;
 
-    // Fondo de la escena
+
     const fondo = this.add.image(0, 0, "fondo");
     fondo.setOrigin(0, 0);
     fondo.displayWidth = width;
     fondo.displayHeight = height;
 
-    // Añadir elementos visuales
     this.Terran = this.add
       .image(width * 0.4, height * 0.15, "tierra")
       .setScale(0.5);
@@ -62,14 +61,14 @@ class scenaPrincipal extends Phaser.Scene {
     );
     titulo.setOrigin(0.5);
 
-    // Obtener dimensiones del texto
+
     const tituloWidth = titulo.width;
     const tituloHeight = titulo.height;
 
 
     const estrella = this.add.sprite(
       titulo.x + tituloWidth / 2 + 20,
-      titulo.y, // Posición Y: misma altura que el texto
+      titulo.y,
       "estrella"
     );
     estrella.anims.play("parpadear");
@@ -86,7 +85,7 @@ class scenaPrincipal extends Phaser.Scene {
     estrellaFugaz.anims.play("fugaz");
 
     // Música de fondo
-    const music = this.sound.add("musica", { loop: true, volume: 0.1 });
+    const music = this.sound.add("musica", { loop: true, volume: 0.2 });
     music.play();
 
     // Capa negra para la transición

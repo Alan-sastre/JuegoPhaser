@@ -16,6 +16,8 @@
         const screenWidth = this.sys.game.config.width;
         const screenHeight = this.sys.game.config.height;
 
+            this.sound.stopAll();
+
 
         this.add.rectangle(
         screenWidth / 2,

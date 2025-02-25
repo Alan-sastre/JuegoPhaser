@@ -8,6 +8,7 @@ class scenaIntro extends Phaser.Scene {
     this.load.image("capitan", "assets/scenaIntro/capitanRobo.png");
     this.load.audio("teclado", "assets/scenaIntro/teclado.mp3");
     this.load.image("nivel", "assets/scenaIntro/nivel1.jpg");
+    this.load.audio("musica", "assets/scenaIntro/musicaSpaceLoop.mp3");
   }
 
   create() {
@@ -24,6 +25,9 @@ class scenaIntro extends Phaser.Scene {
     );
     capitan.setScale(0.8);
     capitan.setOrigin(0.5, 0.5);
+
+    const music = this.sound.add("musica", { loop: true, volume: 0.2 });
+    this.musicaFondo.play();
 
 
     const nivel1Image = this.add.image(width - 100, 30, "nivel");
