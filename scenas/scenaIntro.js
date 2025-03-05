@@ -13,11 +13,14 @@ class scenaIntro extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale.displaySize;
+
+    // Fondo
     const fondo = this.add.image(0, 0, "fondo2");
     fondo.setOrigin(0, 0);
     fondo.displayWidth = this.scale.width;
     fondo.displayHeight = this.scale.height;
 
+    // Imagen del capitán
     const capitan = this.add.image(
       this.scale.width * 0.8,
       this.scale.height * 0.7,
@@ -26,21 +29,24 @@ class scenaIntro extends Phaser.Scene {
     capitan.setScale(0.8);
     capitan.setOrigin(0.5, 0.5);
 
+    // Música de fondo
     const music = this.sound.add("musica", { loop: true, volume: 0.2 });
-    this.musicaFondo.play();
+    music.play();
 
-
+    // Imagen del nivel
     const nivel1Image = this.add.image(width - 100, 30, "nivel");
     nivel1Image.setOrigin(0.5);
     nivel1Image.setScale(0.2);
 
+    // Manejo de redimensionamiento
     this.scale.on("resize", (gameSize) => {
       const newWidth = gameSize.width;
-      nivel1Image.x = newWidth + 100;
+      nivel1Image.x = newWidth - 100;
     });
 
+    // Diálogos
     this.dialogues = [
-      "!Antes de comenzar el nivel, los jugadores recibirán una breve explicación interactiva sobre los conceptos básicos de robótica y programación:",
+      "¡Antes de comenzar el nivel, los jugadores recibirán una breve explicación interactiva sobre los conceptos básicos de robótica y programación:",
       "¿Qué es un robot? \n \n Un robot es una máquina programable diseñada para realizar tareas automáticamente. Puede percibir su entorno (sensores), procesar información (controladores) y actuar (motores y actuadores).",
       "¿Qué es la programación? \n \n La programación es el proceso de crear instrucciones para que un robot o dispositivo ejecute tareas específicas. Los comandos deben ser claros y lógicos para evitar errores.",
       "Pregunta: ¿Cuál de estas partes es esencial para que un robot funcione correctamente?",
@@ -49,10 +55,6 @@ class scenaIntro extends Phaser.Scene {
     this.currentDialogueIndex = 0;
     this.showNextDialogue();
   }
-
-
-
-
 
   showNextDialogue() {
     if (this.currentDialogueIndex < this.dialogues.length) {
@@ -345,19 +347,18 @@ class scenaIntro extends Phaser.Scene {
       {
         fontSize: "30px",
         fill: "#ffffff",
-
       }
     );
 
     continueText.setShadow(6, 6, "black", 2, true, true);
 
     scene.tweens.add({
-  targets: continueText,
-  alpha: 0,         // Desvanece el texto
-  duration: 500,    // Duración en milisegundos (0.5 segundos)
-  yoyo: true,       // Hace que el efecto se invierta (volver a aparecer)
-  repeat: -1        // Repetir infinitamente
-});
+      targets: continueText,
+      alpha: 0,
+      duration: 500,
+      yoyo: true,
+      repeat: -1,
+    });
 
     return { dialogBox, dialogText, continueText };
   }
