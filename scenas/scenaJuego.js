@@ -395,7 +395,7 @@ class scenaJuego extends Phaser.Scene {
         .setOrigin(0.5);
 
       // Esperar 3 segundos antes de pasar a la siguiente escena
-      this.time.delayedCall(3000, () => {
+      this.time.delayedCall(300, () => {
         // Cambiar a la siguiente escena
         this.scene.start("scenaFinal");
       });
