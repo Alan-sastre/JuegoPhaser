@@ -22,7 +22,12 @@ var config = {
     antialias: false,
   },
   scene: [
-    scenaIntro
+    scenaPrincipal,
+    scenaVideo,
+    scenaIntro,
+    scenaRompecabezas,
+    scenaJuego,
+    scenaFinal
   ],
 };
 
