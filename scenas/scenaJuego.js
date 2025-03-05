@@ -394,41 +394,10 @@ class scenaJuego extends Phaser.Scene {
         })
         .setOrigin(0.5);
 
-      // Botón de continuar
-      const continuarBtn = this.add
-        .text(this.scale.width / 2, this.scale.height / 2 + 60, "", {
-          fontSize: "36px",
-          fill: "#fff",
-          stroke: "#000",
-          strokeThickness: 4,
-        })
-        .setOrigin(0.5)
-        .setInteractive();
-
-      // Animación de parpadeo para el botón de continuar
-      this.tweens.add({
-        targets: continuarBtn,
-        alpha: 0,
-        duration: 500,
-        yoyo: true,
-        repeat: -1,
-      });
-
-      // Evento del botón de continuar
-      continuarBtn.on("pointerdown", () => {
-        this.physics.resume(); // Reanudar el juego
-        victoriaText.destroy();
-        continuarBtn.destroy();
-
-        // Reiniciar la generación de enemigos
-        this.eventos = [
-          this.time.addEvent({
-            delay: 2000,
-            callback: this.generarEnemigo,
-            callbackScope: this,
-            loop: true,
-          }),
-        ];
+      // Esperar 3 segundos antes de pasar a la siguiente escena
+      this.time.delayedCall(3000, () => {
+        // Cambiar a la siguiente escena
+        this.scene.start("scenaFinal");
       });
     });
   }
